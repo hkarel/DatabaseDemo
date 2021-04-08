@@ -1,0 +1,6 @@
+build/*
+
+*.qbs.user*
+*.autosave
+qgit_*
+.project
