@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>postgres.conf</file>
+        <file>create_database.sql</file>
+    </qresource>
+</RCC>
