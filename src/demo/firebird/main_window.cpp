@@ -12,12 +12,12 @@
 
 #include "../enum_test.h"
 #include "database/sql_func.h"
-#include "database/postgres_pool.h"
+#include "database/firebird_pool.h"
 
 #include <unistd.h>
 #include <thread>
 
-using namespace db::postgres;
+using namespace db::firebird;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -46,7 +46,7 @@ void MainWindow::deinit()
 
     _threadIds.lock([](std::vector<pid_t>& tids) {
         for (pid_t tid : tids)
-            pgpool().abortOperation(tid);
+            fbpool().abortOperation(tid);
     });
 
     while (!_threadIds.empty())
@@ -70,8 +70,8 @@ void MainWindow::loadGeometry()
 
 void MainWindow::on_btnConnect_clicked(bool)
 {
-    log_debug << "Call db::postgres::pool().connect()";
-    _connect = db::postgres::pool().connect();
+    log_debug << "Call db::firebird::pool().connect()";
+    _connect = db::firebird::pool().connect();
 }
 
 void MainWindow::on_btnDisconnect_clicked(bool)
@@ -87,7 +87,7 @@ void MainWindow::on_btnBeginTransact1_clicked(bool)
 {
     _transact1.reset();
 
-    db::postgres::Driver::Ptr dbcon = pgpool().connect();
+    db::firebird::Driver::Ptr dbcon = fbpool().connect();
     _transact1 = dbcon->createTransact();
     _transact1->begin();
 }
@@ -108,7 +108,7 @@ void MainWindow::on_btnBeginTransact2_clicked(bool)
 {
     _transact2.reset();
 
-    db::postgres::Driver::Ptr dbcon = pgpool().connect();
+    db::firebird::Driver::Ptr dbcon = fbpool().connect();
     _transact2 = dbcon->createTransact();
     _transact2->begin();
 }
@@ -129,7 +129,7 @@ void MainWindow::on_btnSelect1_clicked(bool)
 {
     _queryModel.setQuery(QSqlQuery());
 
-    db::postgres::Driver::Ptr dbcon = pgpool().connect();
+    db::firebird::Driver::Ptr dbcon = fbpool().connect();
     QSqlQuery q {dbcon->createResult()};
 
     q.setForwardOnly(false);
@@ -142,8 +142,10 @@ void MainWindow::on_btnSelect1_clicked(bool)
         log_info << "--- Select-query 1 exec success ---";
     }
 
+    log_info << "Select-query 1 records count: " << q.size();
+
     log_info << "Select-query 1 records count: "
-             << db::postgres::resultSize(q, pgpool().connect());
+             << db::firebird::resultSize(q);
 
     _queryModel.setQuery(q);
 
@@ -153,34 +155,34 @@ void MainWindow::on_btnSelect1_clicked(bool)
 void MainWindow::on_btnSelect2_clicked(bool)
 {
     _queryModel.setQuery(QSqlQuery());
-    //_queryModel.query().clear();
 
-    db::postgres::Driver::Ptr dbcon = pgpool().connect();
+    db::firebird::Driver::Ptr dbcon = fbpool().connect();
     QSqlQuery q {dbcon->createResult()};
 
     q.setForwardOnly(false);
 
     if (sql::exec(q,
-        " SELECT        "
-        "   ID          "
-        "  ,F_BOOL      "
-        "  ,F_INT       "
-        "  ,F_INT64     "
-        "  ,F_ENUM      "
-        "  ,F_FLOAT     "
-        "  ,F_DATE      "
-        "  ,F_TIME      "
-        "  ,F_DATETIME  "
-        "  ,F_STRING    "
-        " FROM          "
-        "   TABLE1      "
-        " LIMIT ?       ", 10))
+        " SELECT FIRST 10"
+        "   ID           "
+        "  ,F_BOOL       "
+        "  ,F_INT        "
+        "  ,F_INT64      "
+        "  ,F_ENUM       "
+        "  ,F_FLOAT      "
+        "  ,F_DATE       "
+        "  ,F_TIME       "
+        "  ,F_DATETIME   "
+        "  ,F_STRING     "
+        " FROM           "
+        "   TABLE1       "))
     {
         log_info << "--- Select-query 2 exec success ---";
     }
 
+    log_info << "Select-query 2 records count: " << q.size();
+
     log_info << "Select-query 2 records count: "
-             << db::postgres::resultSize(q, pgpool().connect());
+             << db::firebird::resultSize(q);
 
     _queryModel.setQuery(q);
 
@@ -191,13 +193,13 @@ void MainWindow::on_btnSelect3_clicked(bool)
 {
     _queryModel.setQuery(QSqlQuery());
 
-    db::postgres::Driver::Ptr dbcon = pgpool().connect();
+    db::firebird::Driver::Ptr dbcon = fbpool().connect();
     QSqlQuery q {dbcon->createResult()};
 
     q.setForwardOnly(false);
 
     if (sql::exec(q,
-        " SELECT        "
+        " SELECT FIRST 5"
         "   ID          "
         "  ,F_BOOL      "
         "  ,F_INT       "
@@ -209,8 +211,7 @@ void MainWindow::on_btnSelect3_clicked(bool)
         "  ,F_DATETIME  "
         "  ,F_STRING    "
         " FROM          "
-        "   TABLE1      "
-        " LIMIT 5       "))
+        "   TABLE1      "))
     {
         log_info << "--- Select-query 3 exec success ---";
     }
@@ -261,7 +262,7 @@ void MainWindow::on_btnInsAndSelect4_clicked(bool)
 
     QUuidEx id = QUuidEx::createUuid();
 
-    db::postgres::Driver::Ptr dbcon = pgpool().connect();
+    db::firebird::Driver::Ptr dbcon = fbpool().connect();
     QSqlQuery q {dbcon->createResult()};
 
     QString fields =
@@ -275,7 +276,7 @@ void MainWindow::on_btnInsAndSelect4_clicked(bool)
         ",F_TIME      "
         ",F_DATETIME  ";
 
-    QString sql = sql::INSERT_OR_UPDATE_PG("TABLE1", fields, "ID");
+    QString sql = sql::UPDATE_OR_INSERT_INTO("TABLE1", fields, "ID");
 
     if (!q.prepare(sql))
         return;
@@ -295,12 +296,12 @@ void MainWindow::on_btnInsAndSelect4_clicked(bool)
     if (!q.exec())
         return;
 
-    db::postgres::Driver::Ptr dbcon2 = pgpool().connect();
+    db::firebird::Driver::Ptr dbcon2 = fbpool().connect();
     QSqlQuery q2 {dbcon2->createResult()};
 
     q2.setForwardOnly(false);
 
-    if (!sql::exec(q2, "SELECT * FROM TABLE1 WHERE ID = $1", id))
+    if (!sql::exec(q2, "SELECT * FROM TABLE1 WHERE ID = ?", id))
         return;
 
     _queryModel.setQuery(q2);
@@ -308,16 +309,17 @@ void MainWindow::on_btnInsAndSelect4_clicked(bool)
     log_info << "--- Insert & Select-query 4 exec success ---";
 
     log_info << "Select-query 4 records count: "
-             << db::postgres::resultSize(q2, pgpool().connect());
+             << db::firebird::resultSize(q2);
 
     log_info << "NumRowsAffected: " << q2.numRowsAffected();
+
 }
 
 void MainWindow::on_btnUpdate1_clicked(bool)
 {
     _queryModel.setQuery(QSqlQuery());
 
-    db::postgres::Driver::Ptr dbcon = pgpool().connect();
+    db::firebird::Driver::Ptr dbcon = fbpool().connect();
     QSqlQuery q {dbcon->createResult()};
 
     if (sql::exec(q, "UPDATE TABLE1 SET F_FLOAT = F_FLOAT*2"))
@@ -330,7 +332,7 @@ void MainWindow::on_btnUpdate2_clicked(bool)
 {
     _queryModel.setQuery(QSqlQuery());
 
-    db::postgres::Driver::Ptr dbcon = pgpool().connect();
+    db::firebird::Driver::Ptr dbcon = fbpool().connect();
     QSqlQuery q {dbcon->createResult()};
 
     QString fields =
@@ -351,7 +353,7 @@ void MainWindow::on_btnUpdate2_clicked(bool)
         ",F_ARR_INT   "
         ",F_ARR_UUID  ";
 
-    QString sql = sql::INSERT_OR_UPDATE_PG("TABLE1", fields, "ID");
+    QString sql = sql::UPDATE_OR_INSERT_INTO("TABLE1", fields, "ID");
 
     if (!q.prepare(sql))
         return;
@@ -380,7 +382,7 @@ void MainWindow::on_btnInsert1_clicked(bool)
 {
     _queryModel.setQuery(QSqlQuery());
 
-    db::postgres::Driver::Ptr dbcon = pgpool().connect();
+    db::firebird::Driver::Ptr dbcon = fbpool().connect();
     QSqlQuery q {dbcon->createResult()};
 
     QString sql =
@@ -399,11 +401,9 @@ void MainWindow::on_btnInsert1_clicked(bool)
         "  ,F_BYTEARRAY                             "
         "  ,F_STRING                                "
         "  ,F_UUID                                  "
-        "  ,F_ARR_INT                               "
-        "  ,F_ARR_UUID                              "
         " ) VALUES (                                "
-        "   'e7da463a-e96d-43e0-baeb-99278a1845ee'  "
-        "  ,true                                    "
+        "   :ID                                     "
+        "  ,:F_BOOL                                 "
         "  ,123                                     "
         "  ,123456                                  "
         "  ,:F_UINT64                               "
@@ -416,29 +416,23 @@ void MainWindow::on_btnInsert1_clicked(bool)
         "  ,:F_BYTEARRAY                            "
         "  ,'STRING TEXT'                           "
         "  ,:F_UUID                                 "
-        "  ,:F_ARR_INT                              "
-        "  ,:F_ARR_UUID                             "
         " )                                         ";
 
     if (!q.prepare(sql))
         return;
 
+    QUuidEx id {"e7da463a-e96d-43e0-baeb-99278a1845ee"};
+
     quint64 f_uint64 = 123456;
     QByteArray f_bytearray {"\x31\x32\x33\x34", 4};
     QUuidEx f_uuid {"8e87196a-33d1-4771-9847-ec8703edc46b"};
-    QVector<qint32> f_arr_int {1, 2, 3, 4, 5};
 
-    QVector<QUuidEx> f_arr_uuid;
-    f_arr_uuid.append(QUuidEx("c9489d48-ca11-49db-9da0-6e2e14c3f105"));
-    f_arr_uuid.append(QUuidEx("1e8b4002-ebe0-4ad9-8c2d-607b61d76b61"));
-    f_arr_uuid.append(QUuidEx("97e724e5-89d3-44fb-a207-a6a43dcd7359"));
-
+    sql::bindValue(q, ":ID          " , id                 );
+    sql::bindValue(q, ":F_BOOL      " , true               );
     sql::bindValue(q, ":F_UINT64    " , f_uint64           );
     sql::bindValue(q, ":F_ENUM      " , InsertMode::Single );
     sql::bindValue(q, ":F_BYTEARRAY " , f_bytearray        );
     sql::bindValue(q, ":F_UUID      " , f_uuid             );
-    sql::bindValue(q, ":F_ARR_INT   " , f_arr_int          );
-    sql::bindValue(q, ":F_ARR_UUID  " , f_arr_uuid         );
 
     if (q.exec())
     {
@@ -450,9 +444,9 @@ void MainWindow::on_btnInsert2_clicked(bool)
 {
     _queryModel.setQuery(QSqlQuery());
 
-    db::postgres::Driver::Ptr dbcon = pgpool().connect();
-    db::postgres::Transaction::Ptr transact = dbcon->createTransact();
-    QSqlQuery q {db::postgres::createResult(transact)};
+    db::firebird::Driver::Ptr dbcon = fbpool().connect();
+    db::firebird::Transaction::Ptr transact = dbcon->createTransact();
+    QSqlQuery q {db::firebird::createResult(transact)};
 
     if (!transact->begin())
         return;
@@ -471,11 +465,9 @@ void MainWindow::on_btnInsert2_clicked(bool)
         ",F_DATETIME  "
         ",F_BYTEARRAY "
         ",F_STRING    "
-        ",F_UUID      "
-        ",F_ARR_INT   "
-        ",F_ARR_UUID  ";
+        ",F_UUID      ";
 
-    QString sql = sql::INSERT_OR_UPDATE_PG("TABLE1", fields, "ID");
+    QString sql = sql::UPDATE_OR_INSERT_INTO("TABLE1", fields, "ID");
 
     if (!q.prepare(sql))
         return;
@@ -484,11 +476,6 @@ void MainWindow::on_btnInsert2_clicked(bool)
     QByteArray f_bytearray {"\x31\x32\x33\x34", 4};
 
     QUuidEx f_uuid = QUuidEx::createUuid();
-    QVector<qint32> f_arr_int {1, 2, 3, 4};
-
-    QVector<QUuidEx> f_arr_uuid;
-    f_arr_uuid.append(QUuidEx::createUuid());
-    f_arr_uuid.append(QUuidEx::createUuid());
 
     sql::bindValue(q, ":ID          " , QUuidEx::createUuid() );
     sql::bindValue(q, ":F_BOOL      " , true                  );
@@ -504,13 +491,9 @@ void MainWindow::on_btnInsert2_clicked(bool)
     sql::bindValue(q, ":F_BYTEARRAY " , f_bytearray           );
     sql::bindValue(q, ":F_STRING    " , QString("TEXT 2")     );
     sql::bindValue(q, ":F_UUID      " , f_uuid                );
-    sql::bindValue(q, ":F_ARR_INT   " , f_arr_int             );
-    sql::bindValue(q, ":F_ARR_UUID  " , f_arr_uuid            );
 
     if (!q.exec())
         return;
-
-    QVector<qint32> f_arr_int2 {5, 6, 7, 8};
 
     sql::bindValue(q, ":ID          " , QUuidEx::createUuid() );
     sql::bindValue(q, ":F_BOOL      " , false                 );
@@ -526,8 +509,6 @@ void MainWindow::on_btnInsert2_clicked(bool)
     sql::bindValue(q, ":F_BYTEARRAY " , QVariant(QVariant::ByteArray));
     sql::bindValue(q, ":F_STRING    " , QVariant(QVariant::String));
     sql::bindValue(q, ":F_UUID      " , f_uuid                );
-    sql::bindValue(q, ":F_ARR_INT   " , f_arr_int2            );
-  //sql::bindValue(q, ":F_ARR_UUID  " , f_arr_uuid            );
 
     if (!q.exec())
         return;
@@ -538,9 +519,9 @@ void MainWindow::on_btnInsert2_clicked(bool)
     }
 }
 
-void insertThread(db::postgres::Transaction::Ptr transact, int index)
+void insertThread(db::firebird::Transaction::Ptr transact, int index)
 {
-    QSqlQuery q {db::postgres::createResult(transact)};
+    QSqlQuery q {db::firebird::createResult(transact)};
 
     QString fields =
         " ID          "
@@ -556,16 +537,12 @@ void insertThread(db::postgres::Transaction::Ptr transact, int index)
         ",F_DATETIME  "
         ",F_BYTEARRAY "
         ",F_STRING    "
-        ",F_UUID      "
-        ",F_ARR_INT   "
-        ",F_ARR_UUID  ";
+        ",F_UUID      ";
 
-    QString sql = sql::INSERT_OR_UPDATE_PG("TABLE1", fields, "ID");
+    QString sql = sql::UPDATE_OR_INSERT_INTO("TABLE1", fields, "ID");
 
     if (!q.prepare(sql))
         return;
-
-    QVector<qint32> f_arr_int {1, 2, 3, 4};
 
     QByteArray f_bytearray;
     if (index)
@@ -575,10 +552,6 @@ void insertThread(db::postgres::Transaction::Ptr transact, int index)
     {
         QUuidEx f_uuid = QUuidEx::createUuid();
         QDateTime dtime = QDateTime::currentDateTime();
-
-        QVector<QUuidEx> f_arr_uuid;
-        f_arr_uuid.append(QUuidEx::createUuid());
-        f_arr_uuid.append(QUuidEx::createUuid());
 
         sql::bindValue(q, ":ID          " , QUuidEx::createUuid() );
         sql::bindValue(q, ":F_BOOL      " , index                 );
@@ -594,8 +567,6 @@ void insertThread(db::postgres::Transaction::Ptr transact, int index)
         sql::bindValue(q, ":F_BYTEARRAY " , f_bytearray           );
         sql::bindValue(q, ":F_STRING    " , QString("TEXT 3")     );
         sql::bindValue(q, ":F_UUID      " , f_uuid                );
-        sql::bindValue(q, ":F_ARR_INT   " , f_arr_int             );
-        sql::bindValue(q, ":F_ARR_UUID  " , f_arr_uuid            );
 
         if (!q.exec())
             return;
@@ -610,8 +581,8 @@ void MainWindow::on_btnInsert3_clicked(bool)
     {
         trd::ThreadIdLock threadIdLock {&_threadIds}; (void) threadIdLock;
 
-        db::postgres::Driver::Ptr dbcon = pgpool().connect();
-        db::postgres::Transaction::Ptr transact = dbcon->createTransact();
+        db::firebird::Driver::Ptr dbcon = fbpool().connect();
+        db::firebird::Transaction::Ptr transact = dbcon->createTransact();
 
         if (!transact->begin())
             return;
@@ -636,7 +607,7 @@ void MainWindow::on_btnDeleteAll_clicked(bool)
 {
     _queryModel.setQuery(QSqlQuery());
 
-    db::postgres::Driver::Ptr dbcon = pgpool().connect();
+    db::firebird::Driver::Ptr dbcon = fbpool().connect();
     QSqlQuery q {dbcon->createResult()};
 
     if (sql::exec(q, "delete from table1"))
@@ -647,5 +618,5 @@ void MainWindow::on_btnDeleteAll_clicked(bool)
 
 void MainWindow::on_btnAbortQuery_clicked(bool)
 {
-    pgpool().abortOperations();
+    fbpool().abortOperations();
 }

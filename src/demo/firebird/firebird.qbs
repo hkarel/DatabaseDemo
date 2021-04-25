@@ -2,17 +2,19 @@ import qbs
 import QbsUtl
 
 Product {
-    name: "Postgres"
-    targetName: "db-demo-postgres"
+    name: "Firebird"
+    targetName: "db-demo-firebird"
     condition: true
 
     type: "application"
     destinationDirectory: "./bin"
 
     Depends { name: "cpp" }
+    Depends { name: "cppstdlib" }
     Depends { name: "Database" }
     Depends { name: "SharedLib" }
     Depends { name: "Yaml" }
+    Depends { name: "lib.firebird" }
     Depends { name: "Qt"; submodules: ["core", "widgets", "sql"] }
 
     cpp.defines:  project.cppDefines
@@ -21,30 +23,34 @@ Product {
 
     cpp.includePaths: [
         "./",
-        "/usr/include/postgresql",
     ]
 
     cpp.systemIncludePaths: QbsUtl.concatPaths(
         Qt.core.cpp.includePaths // Декларация для подавления Qt warning-ов
+       ,lib.firebird.includePath
     )
 
     cpp.rpaths: QbsUtl.concatPaths(
+        lib.firebird.libraryPath,
         "$ORIGIN/../lib"
     )
 
+     cpp.libraryPaths: QbsUtl.concatPaths(
+         lib.firebird.libraryPath
+     )
+
     cpp.dynamicLibraries: [
         "pthread",
-        "pq",
-    ]
+    ].concat(lib.firebird.dynamicLibraries)
 
     Group {
-         name: "postgres"
+         name: "firebird"
          prefix: "../../database/database/"
          files: [
-             "postgres_driver.cpp",
-             "postgres_driver.h",
-             "postgres_pool.cpp",
-             "postgres_pool.h",
+             "firebird_driver.cpp",
+             "firebird_driver.h",
+             "firebird_pool.cpp",
+             "firebird_pool.h",
          ]
     }
 
@@ -52,7 +58,7 @@ Product {
         "main_window.cpp",
         "main_window.h",
         "main_window.ui",
-        "postgres.cpp",
-        "postgres.qrc",
+        "firebird.cpp",
+        "firebird.qrc",
     ]
 }

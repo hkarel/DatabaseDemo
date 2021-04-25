@@ -11,13 +11,13 @@
 #include "shared/qt/logger_operators.h"
 #include "shared/qt/version_number.h"
 
-#include "database/postgres_pool.h"
+#include "database/firebird_pool.h"
 
 #include <QApplication>
 #include <stdlib.h>
 #include <unistd.h>
 
-#define APPLICATION_NAME "Postgres Demo"
+#define APPLICATION_NAME "Firebird Demo"
 
 using namespace std;
 
@@ -30,20 +30,7 @@ void stopLog()
 
 void stopProgram()
 {
-    #define STOP_THREAD(THREAD_FUNC, NAME, TIMEOUT) \
-        if (!THREAD_FUNC.stop(TIMEOUT * 1000)) { \
-            log_info << "Thread '" NAME "': Timeout expired, thread will be terminated"; \
-            THREAD_FUNC.terminate(); \
-        }
-
-//    STOP_THREAD(video::transport::sendPool(),  "VideoSendPool",     20)
-//    STOP_THREAD(video::transport::recvPool(),  "VideoRecvPool",     20)
-//    STOP_THREAD(video::jitter(),               "VideoJitter",       15)
-//    STOP_THREAD(video::capture(),              "VideoCapture0",     15)
-
-    #undef STOP_THREAD
-
-    db::postgres::pool().close();
+    db::firebird::pool().close();
 
     log_info << log_format("'%?' is stopped", APPLICATION_NAME);
     stopLog();
@@ -52,40 +39,6 @@ void stopProgram()
 
 int main(int argc, char *argv[])
 {
-//    // Тест скорости доступа к полю структуры 'A'
-//    // при использовании shared_ptr и container_ptr
-//    struct A {int b;};
-//    steady_timer timer;
-//    std::shared_ptr<A> a1 {new A};
-//    container_ptr<A>   a2 {new A};
-//    qint32 tm1, tm2;
-
-//    for (int k = 0; k < 10; ++k)
-//    {
-//        std::srand(std::time(0));
-
-//        timer.reset();
-//        for (int i = 0; i < 10*1000000; ++i)
-//        {
-//            a1->b = std::rand();
-//        }
-//        (void) a1->b;
-//        tm1 = timer.elapsed<std::chrono::microseconds>();
-
-//        timer.reset();
-//        for (int i = 0; i < 10*1000000; ++i)
-//        {
-//            a2->b = std::rand();
-//        }
-//        (void) a2->b;
-//        tm2 = timer.elapsed<std::chrono::microseconds>();
-
-//        int persent = (1.0 - float(tm1) / tm2) * 100;
-//        qWarning("%d  %d  %d", tm1, tm2, persent);
-//    }
-//    return 0;
-
-
     // Устанавливаем в качестве разделителя целой и дробной части символ '.',
     // если этого не сделать - функции преобразования строк в числа (std::atof)
     // буду неправильно работать.
@@ -103,7 +56,7 @@ int main(int argc, char *argv[])
 #endif
 
         // Путь к основному конфиг-файлу
-        QString configFile = config::qdir() + "/postgres.conf";
+        QString configFile = config::qdir() + "/firebird.conf";
         if (QFile::exists(configFile))
         {
             if (!config::base().readFile(configFile.toStdString()))
@@ -118,7 +71,7 @@ int main(int argc, char *argv[])
             QByteArray conf;
 
             // Создаем демонстрационные конфиг-файлы
-            file.setFileName("://postgres.conf");
+            file.setFileName("://firebird.conf");
             file.open(QIODevice::ReadOnly);
             conf = file.readAll();
 
@@ -159,14 +112,20 @@ int main(int argc, char *argv[])
 
         QApplication appl {argc, argv};
 
-        auto databaseInit = [](db::postgres::Driver::Ptr db) -> bool
+        // Подключение к БД
+        if (!db::firebird::setIgnoreSIGTERM())
+        {
+            stopProgram();
+            return 1;
+        }
+
+        auto databaseInit = [](db::firebird::Driver::Ptr db) -> bool
         {
             QString hostAddress = "127.0.0.1";
-            int port = 5432;
-            QString user = "postgres";
-            QString password = "postgres";
-            QString name;
-            QString options;
+            int port = 3050;
+            QString user = "SYSDBA";
+            QString password = "masterkey";
+            QString file;
 
             YamlConfig::Func loadFunc = [&](YamlConfig* conf, YAML::Node& node, bool /*logWarn*/)
             {
@@ -174,21 +133,19 @@ int main(int argc, char *argv[])
                 conf->getValue(node, "port", port);
                 conf->getValue(node, "user", user);
                 conf->getValue(node, "password", password);
-                conf->getValue(node, "name", name);
-                conf->getValue(node, "options", options);
+#ifndef MINGW
+                conf->getValue(node, "file", file);
+#else
+                conf->getValue(node, "file_win", file);
+#endif
+                config::dirExpansion(file);
                 return true;
             };
             config::base().getValue("database", loadFunc);
-
-            if (name.isEmpty())
-            {
-                log_error << "Database name is not defined";
-                return false;
-            }
-            return db->open(name, user, password, hostAddress, port, options);
+            return db->open(file, user, password, hostAddress, port);
         };
 
-        if (!db::postgres::pool().init(databaseInit))
+        if (!db::firebird::pool().init(databaseInit))
         {
             QFile file;
             QByteArray script;
@@ -205,7 +162,7 @@ int main(int argc, char *argv[])
             stopProgram();
             return 1;
         }
-        db::postgres::pool().setSingleConnect(false);
+        //db::firebird::pool().setSingleConnect(false);
 
         MainWindow mw;
         mw.init();
