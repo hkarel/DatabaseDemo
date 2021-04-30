@@ -208,6 +208,8 @@ void MainWindow::on_btnSelect3_clicked(bool)
         "  ,F_TIME      "
         "  ,F_DATETIME  "
         "  ,F_STRING    "
+        "  ,F_ARR_INT   "
+        "  ,F_ARR_UUID  "
         " FROM          "
         "   TABLE1      "
         " LIMIT 5       "))
@@ -229,6 +231,8 @@ void MainWindow::on_btnSelect3_clicked(bool)
         QTime      f_time;
         QDateTime  f_datetime;
         QString    f_string;
+        QVector<qint32> f_arr_int;
+        QVector<QUuidEx> f_arr_uuid;
 
         sql::assignValue(id         , r, "ID         ");
         sql::assignValue(f_bool     , r, "F_BOOL     ");
@@ -240,6 +244,8 @@ void MainWindow::on_btnSelect3_clicked(bool)
         sql::assignValue(f_time     , r, "F_TIME     ");
         sql::assignValue(f_datetime , r, "F_DATETIME ");
         sql::assignValue(f_string   , r, "F_STRING   ");
+        sql::assignValue(f_arr_int  , r, "F_ARR_INT  ");
+        sql::assignValue(f_arr_uuid , r, "F_ARR_UUID ");
 
         log_debug << "ID         " << id        ;
         log_debug << "F_BOOL     " << f_bool    ;
@@ -251,6 +257,8 @@ void MainWindow::on_btnSelect3_clicked(bool)
         log_debug << "F_TIME     " << f_time    ;
         log_debug << "F_DATETIME " << f_datetime;
         log_debug << "F_STRING   " << f_string  ;
+        log_debug << "F_ARR_INT  " << QVariant::fromValue(f_arr_int);
+        log_debug << "F_ARR_UUID " << QVariant::fromValue(f_arr_uuid);
         log_debug << "-----------";
     }
 }
