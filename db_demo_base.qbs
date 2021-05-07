@@ -31,7 +31,7 @@ Project {
             "VERSION_PROJECT_PATCH=" + projectVersion[3],
             "GIT_REVISION=\"" + projectGitRevision + "\"",
             "QDATASTREAM_VERSION=QDataStream::Qt_5_12",
-            "LOGGER_LESS_SNPRINTF",
+            "LOGGER_LESS_SNPRINTF"
         ];
 
         if (qbs.buildVariant === "release")

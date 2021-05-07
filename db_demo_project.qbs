@@ -6,6 +6,7 @@ DbDemoBase {
 
     readonly property bool demo_firebird: true
     readonly property bool demo_postgres: true
+    readonly property bool demo_mssql: true
 
     references: [
         "src/database/database.qbs",

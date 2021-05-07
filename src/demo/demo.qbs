@@ -10,6 +10,9 @@ Project {
         if (project.demo_postgres === true)
             ref.push("postgres/postgres.qbs");
 
+        if (project.demo_mssql === true)
+            ref.push("mssql/mssql.qbs");
+
         return ref;
     }
 }
