@@ -437,7 +437,7 @@ void MainWindow::on_btnInsAndSelect4_clicked(bool)
 
     q2.setForwardOnly(false);
 
-    if (!sql::exec(q2, "SELECT * FROM TABLE1 WHERE ID = ?", id))
+    if (!sql::exec(q2, "SELECT * FROM TABLE1 WHERE F_GUID = ?", id))
         return;
 
     _queryModel.setQuery(q2);
@@ -814,93 +814,93 @@ void insertThread(db::mssql::Transaction::Ptr transact, int index)
 {
     QSqlQuery q {db::mssql::createResult(transact)};
 
-    q.prepare("INSERT               "
-              "  table1             "
-              " (                   "
-              "  [F_GUID]           "
-              " ,[F_BIGINT]         "
-              " ,[F_BINARY]         "
-              " ,[F_BIT]            "
-              " ,[F_CHAR]           "
-              " ,[F_DATE]           "
-              " ,[F_DATETIME]       "
-              " ,[F_DATETIME2]      "
-              " ,[F_DATETIMEOFFSET] "
-              " ,[F_DECIMAL]        "
-              " ,[F_FLOAT]          "
-              " ,[F_INT]            "
-              " ,[F_NCHAR]          "
-              " ,[F_NUMERIC]        "
-              " ,[F_NVARCHAR_N]     "
-              " ,[F_NVARCHAR_MAX]   "
-              " ,[F_REAL]           "
-              " ,[F_SMALLDATETIME]  "
-              " ,[F_SMALLINT]       "
-              " ,[F_TIME]           "
-              " ,[F_TINYINT]        "
-              " ,[F_VARBINARY_N]    "
-              " ,[F_VARBINARY_MAX]  "
-              " ,[F_VARCHAR_N]      "
-              " ,[F_VARCHAR_MAX]    "
-              " )                   "
-              " VALUES              "
-              " (                   "
-              "  :F_GUID            "
-              " ,:F_BIGINT          "
-              " ,:F_BINARY          "
-              " ,:F_BIT             "
-              " ,:F_CHAR            "
-              " ,:F_DATE            "
-              " ,:F_DATETIME        "
-              " ,:F_DATETIME2       "
-              " ,:F_DATETIMEOFFSET  "
-              " ,:F_DECIMAL         "
-              " ,:F_FLOAT           "
-              " ,:F_INT             "
-              " ,:F_NCHAR           "
-              " ,:F_NUMERIC         "
-              " ,:F_NVARCHAR_N      "
-              " ,:F_NVARCHAR_MAX    "
-              " ,:F_REAL            "
-              " ,:F_SMALLDATETIME   "
-              " ,:F_SMALLINT        "
-              " ,:F_TIME            "
-              " ,:F_TINYINT         "
-              " ,:F_VARBINARY_N     "
-              " ,:F_VARBINARY_MAX   "
-              " ,:F_VARCHAR_N       "
-              " ,:F_VARCHAR_MAX     "
-              " );                  ");
+    q.prepare("INSERT                  "
+              "  TABLE1                "
+              "  (                     "
+              "     [F_GUID]           "
+              "    ,[F_BIGINT]         "
+              "    ,[F_BINARY]         "
+              "    ,[F_BIT]            "
+              "    ,[F_CHAR]           "
+              "    ,[F_DATE]           "
+              "    ,[F_DATETIME]       "
+              "    ,[F_DATETIME2]      "
+              "    ,[F_DATETIMEOFFSET] "
+              "    ,[F_DECIMAL]        "
+              "    ,[F_FLOAT]          "
+              "    ,[F_INT]            "
+              "    ,[F_NCHAR]          "
+              "    ,[F_NUMERIC]        "
+              "    ,[F_NVARCHAR_N]     "
+              "    ,[F_NVARCHAR_MAX]   "
+              "    ,[F_REAL]           "
+              "    ,[F_SMALLDATETIME]  "
+              "    ,[F_SMALLINT]       "
+              "    ,[F_TIME]           "
+              "    ,[F_TINYINT]        "
+              "    ,[F_VARBINARY_N]    "
+              "    ,[F_VARBINARY_MAX]  "
+              "    ,[F_VARCHAR_N]      "
+              "    ,[F_VARCHAR_MAX]    "
+              "  )                     "
+              "  VALUES                "
+              "  (                     "
+              "     :F_GUID            "
+              "    ,:F_BIGINT          "
+              "    ,:F_BINARY          "
+              "    ,:F_BIT             "
+              "    ,:F_CHAR            "
+              "    ,:F_DATE            "
+              "    ,:F_DATETIME        "
+              "    ,:F_DATETIME2       "
+              "    ,:F_DATETIMEOFFSET  "
+              "    ,:F_DECIMAL         "
+              "    ,:F_FLOAT           "
+              "    ,:F_INT             "
+              "    ,:F_NCHAR           "
+              "    ,:F_NUMERIC         "
+              "    ,:F_NVARCHAR_N      "
+              "    ,:F_NVARCHAR_MAX    "
+              "    ,:F_REAL            "
+              "    ,:F_SMALLDATETIME   "
+              "    ,:F_SMALLINT        "
+              "    ,:F_TIME            "
+              "    ,:F_TINYINT         "
+              "    ,:F_VARBINARY_N     "
+              "    ,:F_VARBINARY_MAX   "
+              "    ,:F_VARCHAR_N       "
+              "    ,:F_VARCHAR_MAX     "
+              "  );                    ");
 
     QDateTime dtime = QDateTime::currentDateTime();
 
     for (int i = 0; i < 100; ++i)
     {
-        sql::bindValue(q, ":F_GUID             ", QUuidEx().createUuid() );
-        sql::bindValue(q, ":F_BIGINT          ", (index == 0) ? InsertMode::Thread1 : InsertMode::Thread2 );
-        sql::bindValue(q, ":F_BINARY          ", QByteArray("F_BINARY") );
-        sql::bindValue(q, ":F_BIT             ", index );
-        sql::bindValue(q, ":F_CHAR            ", 0x57  );
-        sql::bindValue(q, ":F_DATE            ", dtime );
-        sql::bindValue(q, ":F_DATETIME        ", dtime );
-        sql::bindValue(q, ":F_DATETIME2       ", dtime );
-        sql::bindValue(q, ":F_DATETIMEOFFSET  ", dtime );
-        sql::bindValue(q, ":F_DECIMAL         ", 12.34 );
-        sql::bindValue(q, ":F_FLOAT           ", 23.45);
-        sql::bindValue(q, ":F_INT             ", 567);
-        sql::bindValue(q, ":F_NCHAR           ", 0x89);
-        sql::bindValue(q, ":F_NUMERIC         ", 34.56);
-        sql::bindValue(q, ":F_NVARCHAR_N      ", QString("F_NVARCHAR_N"));
-        sql::bindValue(q, ":F_NVARCHAR_MAX    ", QString("F_NVARCHAR_MAX"));
-        sql::bindValue(q, ":F_REAL            ", 56.78);
-        sql::bindValue(q, ":F_SMALLDATETIME   ", dtime);
-        sql::bindValue(q, ":F_SMALLINT        ", 34);
-        sql::bindValue(q, ":F_TIME            ", dtime);
-        sql::bindValue(q, ":F_TINYINT         ", 2);
-        sql::bindValue(q, ":F_VARBINARY_N     ", QString("F_VARBINARY_N"));
-        sql::bindValue(q, ":F_VARBINARY_MAX   ", QString("F_VARBINARY_MAX"));
-        sql::bindValue(q, ":F_VARCHAR_N       ", QString("F_VARCHAR_N"));
-        sql::bindValue(q, ":F_VARCHAR_MAX     ", QString("F_VARCHAR_MAX"));
+        sql::bindValue(q, ":F_GUID          ", QUuidEx().createUuid() );
+        sql::bindValue(q, ":F_BIGINT        ", (index == 0) ? InsertMode::Thread1 : InsertMode::Thread2 );
+        sql::bindValue(q, ":F_BINARY        ", QByteArray("F_BINARY") );
+        sql::bindValue(q, ":F_BIT           ", index );
+        sql::bindValue(q, ":F_CHAR          ", 0x57  );
+        sql::bindValue(q, ":F_DATE          ", dtime );
+        sql::bindValue(q, ":F_DATETIME      ", dtime );
+        sql::bindValue(q, ":F_DATETIME2     ", dtime );
+        sql::bindValue(q, ":F_DATETIMEOFFSET", dtime );
+        sql::bindValue(q, ":F_DECIMAL       ", 12.34 );
+        sql::bindValue(q, ":F_FLOAT         ", 23.45);
+        sql::bindValue(q, ":F_INT           ", 567);
+        sql::bindValue(q, ":F_NCHAR         ", 0x89);
+        sql::bindValue(q, ":F_NUMERIC       ", 34.56);
+        sql::bindValue(q, ":F_NVARCHAR_N    ", QString("F_NVARCHAR_N"));
+        sql::bindValue(q, ":F_NVARCHAR_MAX  ", QString("F_NVARCHAR_MAX"));
+        sql::bindValue(q, ":F_REAL          ", 56.78);
+        sql::bindValue(q, ":F_SMALLDATETIME ", dtime);
+        sql::bindValue(q, ":F_SMALLINT      ", 34);
+        sql::bindValue(q, ":F_TIME          ", dtime);
+        sql::bindValue(q, ":F_TINYINT       ", 2);
+        sql::bindValue(q, ":F_VARBINARY_N   ", QString("F_VARBINARY_N"));
+        sql::bindValue(q, ":F_VARBINARY_MAX ", QString("F_VARBINARY_MAX"));
+        sql::bindValue(q, ":F_VARCHAR_N     ", QString("F_VARCHAR_N"));
+        sql::bindValue(q, ":F_VARCHAR_MAX   ", QString("F_VARCHAR_MAX"));
 
         if (!q.exec())
             return;
