@@ -20,7 +20,7 @@ Product {
         "./database",
     ]
 
-    // Эта декларация нужна для подавления Qt warning-ов
+    // Декларация для подавления Qt warning-ов
     cpp.systemIncludePaths: Qt.core.cpp.includePaths
 
     files: [
