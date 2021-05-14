@@ -162,7 +162,8 @@ void MainWindow::on_btnSelect2_clicked(bool)
 
     QString query =
         " SELECT TOP %1       "
-        "  [F_BIGINT]         "
+        "  [F_GUID]           "
+        " ,[F_BIGINT]         "
         " ,[F_BINARY]         "
         " ,[F_BIT]            "
         " ,[F_CHAR]           "
@@ -336,8 +337,7 @@ void MainWindow::on_btnSelect3_clicked(bool)
 
 void MainWindow::on_btnInsAndSelect4_clicked(bool)
 {
-    //_queryModel.setQuery(QSqlQuery());
-
+    _queryModel.setQuery(QSqlQuery());
     QUuidEx id = QUuidEx::createUuid();
 
     db::mssql::Driver::Ptr dbcon = mspool().connect();
@@ -403,7 +403,7 @@ void MainWindow::on_btnInsAndSelect4_clicked(bool)
 
     QDateTime dtime = QDateTime::currentDateTime();
 
-    sql::bindValue(q, ":F_GUID            ", QUuidEx().createUuid() );
+    sql::bindValue(q, ":F_GUID            ", id);
     sql::bindValue(q, ":F_BIGINT          ", 1234 );
     sql::bindValue(q, ":F_BINARY          ", QByteArray("F_BINARY") );
     sql::bindValue(q, ":F_BIT             ", false );
@@ -437,15 +437,21 @@ void MainWindow::on_btnInsAndSelect4_clicked(bool)
 
     q2.setForwardOnly(false);
 
-    if (!sql::exec(q2, "SELECT * FROM TABLE1 WHERE F_GUID = ?", id))
+    if (!q2.prepare("SELECT * FROM TABLE1 WHERE F_GUID = :F_GUID"))
         return;
+
+    sql::bindValue(q2, ":F_GUID", id);
+
+     if (q2.exec())
+     {
+         log_info << "--- Insert & Select-query 4 exec success ---";
+     }
+
+     log_info << "Select-query 4 records count: "
+              << db::mssql::resultSize(q2, mspool().connect());
 
     _queryModel.setQuery(q2);
 
-    log_info << "--- Insert & Select-query 4 exec success ---";
-
-    log_info << "Select-query 4 records count: "
-             << db::mssql::resultSize(q2, mspool().connect());
 
     log_info << "NumRowsAffected: " << q2.numRowsAffected();
 }
@@ -874,7 +880,7 @@ void insertThread(db::mssql::Transaction::Ptr transact, int index)
 
     QDateTime dtime = QDateTime::currentDateTime();
 
-    for (int i = 0; i < 100; ++i)
+    for (int i = 0; i < 1000; ++i)
     {
         sql::bindValue(q, ":F_GUID          ", QUuidEx().createUuid() );
         sql::bindValue(q, ":F_BIGINT        ", (index == 0) ? InsertMode::Thread1 : InsertMode::Thread2 );
