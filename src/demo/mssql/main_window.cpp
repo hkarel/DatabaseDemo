@@ -442,12 +442,12 @@ void MainWindow::on_btnInsAndSelect4_clicked(bool)
 
     sql::bindValue(q2, ":F_GUID", id);
 
-     if (q2.exec())
-     {
-         log_info << "--- Insert & Select-query 4 exec success ---";
-     }
+    if (q2.exec())
+    {
+        log_info << "--- Insert & Select-query 4 exec success ---";
+    }
 
-     log_info << "Select-query 4 records count: "
+    log_info << "Select-query 4 records count: "
               << db::mssql::resultSize(q2, mspool().connect());
 
     _queryModel.setQuery(q2);
