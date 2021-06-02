@@ -185,6 +185,7 @@ int main(int argc, char *argv[])
                 log_error << "Database name is not defined";
                 return false;
             }
+            db->setWideChar(false);
             return db->open(name, user, password, hostAddress, port, options);
         };
 

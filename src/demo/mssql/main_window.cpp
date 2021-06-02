@@ -349,17 +349,14 @@ void MainWindow::on_btnInsAndSelect4_clicked(bool)
               "  [F_GUID]           "
               " ,[F_BIGINT]         "
               " ,[F_BINARY]         "
-              " ,[F_BIT]            "
               " ,[F_CHAR]           "
               " ,[F_DATE]           "
               " ,[F_DATETIME]       "
               " ,[F_DATETIME2]      "
               " ,[F_DATETIMEOFFSET] "
-              " ,[F_DECIMAL]        "
               " ,[F_FLOAT]          "
               " ,[F_INT]            "
               " ,[F_NCHAR]          "
-              " ,[F_NUMERIC]        "
               " ,[F_NVARCHAR_N]     "
               " ,[F_NVARCHAR_MAX]   "
               " ,[F_REAL]           "
@@ -377,17 +374,14 @@ void MainWindow::on_btnInsAndSelect4_clicked(bool)
               "  :F_GUID            "
               " ,:F_BIGINT          "
               " ,:F_BINARY          "
-              " ,:F_BIT             "
               " ,:F_CHAR            "
               " ,:F_DATE            "
               " ,:F_DATETIME        "
               " ,:F_DATETIME2       "
               " ,:F_DATETIMEOFFSET  "
-              " ,:F_DECIMAL         "
               " ,:F_FLOAT           "
               " ,:F_INT             "
               " ,:F_NCHAR           "
-              " ,:F_NUMERIC         "
               " ,:F_NVARCHAR_N      "
               " ,:F_NVARCHAR_MAX    "
               " ,:F_REAL            "
@@ -406,17 +400,14 @@ void MainWindow::on_btnInsAndSelect4_clicked(bool)
     sql::bindValue(q, ":F_GUID            ", id);
     sql::bindValue(q, ":F_BIGINT          ", 1234 );
     sql::bindValue(q, ":F_BINARY          ", QByteArray("F_BINARY") );
-    sql::bindValue(q, ":F_BIT             ", false );
-    sql::bindValue(q, ":F_CHAR            ", 0x57  );
+    sql::bindValue(q, ":F_CHAR            ", "strfromqt"  );
     sql::bindValue(q, ":F_DATE            ", dtime );
     sql::bindValue(q, ":F_DATETIME        ", dtime );
     sql::bindValue(q, ":F_DATETIME2       ", dtime );
     sql::bindValue(q, ":F_DATETIMEOFFSET  ", dtime );
-    sql::bindValue(q, ":F_DECIMAL         ", 12.34 );
     sql::bindValue(q, ":F_FLOAT           ", 23.45);
     sql::bindValue(q, ":F_INT             ", 567);
     sql::bindValue(q, ":F_NCHAR           ", 0x89);
-    sql::bindValue(q, ":F_NUMERIC         ", 34.56);
     sql::bindValue(q, ":F_NVARCHAR_N      ", QString("F_NVARCHAR_N"));
     sql::bindValue(q, ":F_NVARCHAR_MAX    ", QString("F_NVARCHAR_MAX"));
     sql::bindValue(q, ":F_REAL            ", 56.78);
