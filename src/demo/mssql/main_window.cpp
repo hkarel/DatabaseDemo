@@ -467,12 +467,12 @@ void MainWindow::on_btnUpdate2_clicked(bool)
     db::mssql::Driver::Ptr dbcon = mspool().connect();
     QSqlQuery q {dbcon->createResult()};
 
-    QVector<QString> match =
+    QList<QString> match =
     {
         "[f_guid]"
     };
 
-    QVector<QString> fields =
+    QList<QString> fields =
     {
         "[F_GUID]",
         "[F_BIGINT]",
@@ -548,12 +548,12 @@ void MainWindow::on_btnUpdate3_clicked(bool)
     db::mssql::Driver::Ptr dbcon = mspool().connect();
     QSqlQuery q {dbcon->createResult()};
 
-    QVector<QString> match =
+    QList<QString> match =
     {
         "[f_guid]"
     };
 
-    QVector<QString> fields =
+    QList<QString> fields =
     {
         "[F_GUID]",
         "[F_BIGINT]",
