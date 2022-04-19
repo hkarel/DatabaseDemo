@@ -27,7 +27,8 @@ public:
 private slots:
 
     void on_btnCopyData_clicked();
-    void on_btnSelect_clicked();
+    void on_btnSelectData_clicked();
+    void on_btnInsertData_clicked();
 
 private:
     Ui::MainWindow *ui;

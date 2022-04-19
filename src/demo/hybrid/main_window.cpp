@@ -126,7 +126,7 @@ void MainWindow::on_btnCopyData_clicked()
     }
 }
 
-void MainWindow::on_btnSelect_clicked()
+void MainWindow::on_btnSelectData_clicked()
 {
     db::mssql::Driver::Ptr dbconSrc = mspool().connect();
     QSqlQuery qSrc {dbconSrc->createResult()};
@@ -153,4 +153,32 @@ void MainWindow::on_btnSelect_clicked()
         sql::assignValue(name, r, "name");
         sql::assignValue(state, r, "state");
     }
+}
+
+void MainWindow::on_btnInsertData_clicked()
+{
+    db::mssql::Driver::Ptr dbconSrc = mspool().connect();
+    QSqlQuery qSrc {dbconSrc->createResult()};
+
+    qSrc.setForwardOnly(false);
+
+    QString querySrc =
+        " INSERT INTO [motor_table]          "
+        "   ( timeline, name, state )  "
+        " VALUES                             "
+        "   (:TIMELINE, :NAME, :STATE) ";
+
+    if (!qSrc.prepare(querySrc))
+        return;
+
+    qint64 timeline = QDateTime::currentMSecsSinceEpoch();
+    QString name = "name";
+    bool state = true;
+
+    sql::bindValue(qSrc, ":TIMELINE", timeline);
+    sql::bindValue(qSrc, ":NAME", name);
+    sql::bindValue(qSrc, ":STATE", state);
+
+    if (!qSrc.exec())
+        return;
 }
