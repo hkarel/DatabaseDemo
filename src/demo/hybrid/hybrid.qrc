@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>hybrid.conf</file>
+        <file>create_database_mssql.sql</file>
+        <file>create_database_postgresql.sql</file>
+    </qresource>
+</RCC>

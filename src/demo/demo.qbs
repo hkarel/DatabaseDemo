@@ -13,6 +13,9 @@ Project {
         if (project.demo_mssql === true)
             ref.push("mssql/mssql.qbs");
 
+        if (project.demo_hybrid === true)
+            ref.push("hybrid/hybrid.qbs");
+
         return ref;
     }
 }
