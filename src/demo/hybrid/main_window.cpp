@@ -155,7 +155,34 @@ void MainWindow::on_btnSelectData_clicked()
     }
 }
 
-void MainWindow::on_btnInsertData_clicked()
+void MainWindow::on_btnInsertData1_clicked()
+{
+    db::mssql::Driver::Ptr dbconSrc = mspool().connect();
+    QSqlQuery qSrc {dbconSrc->createResult()};
+
+    qSrc.setForwardOnly(false);
+
+    // Если параметр не указывать, то в БД значение этого столбца будет NULL
+    QString querySrc =
+        " insert into motor_table "
+        "   ( timeline, state )   "
+        " values                  "
+        "   (:TIMELINE, :STATE)   ";
+
+    if (!qSrc.prepare(querySrc))
+        return;
+
+    qint64 timeline = QDateTime::currentMSecsSinceEpoch();
+    bool state = true;
+
+    sql::bindValue(qSrc, ":TIMELINE", timeline);
+    sql::bindValue(qSrc, ":STATE", state);
+
+    if (!qSrc.exec())
+        return;
+}
+
+void MainWindow::on_btnInsertData2_clicked()
 {
     db::mssql::Driver::Ptr dbconSrc = mspool().connect();
     QSqlQuery qSrc {dbconSrc->createResult()};
@@ -163,20 +190,45 @@ void MainWindow::on_btnInsertData_clicked()
     qSrc.setForwardOnly(false);
 
     QString querySrc =
-        " INSERT INTO [motor_table]          "
+        " insert into [motor_table]    "
         "   ( timeline, name, state )  "
-        " VALUES                             "
+        " values                       "
         "   (:TIMELINE, :NAME, :STATE) ";
 
     if (!qSrc.prepare(querySrc))
         return;
 
     qint64 timeline = QDateTime::currentMSecsSinceEpoch();
-    QString name = "name";
     bool state = true;
 
     sql::bindValue(qSrc, ":TIMELINE", timeline);
-    sql::bindValue(qSrc, ":NAME", name);
+    sql::bindValue(qSrc, ":NAME", QVariant());
+    sql::bindValue(qSrc, ":STATE", state);
+
+    if (!qSrc.exec())
+        return;
+}
+
+void MainWindow::on_btnInsertData3_clicked()
+{
+    db::mssql::Driver::Ptr dbconSrc = mspool().connect();
+    QSqlQuery qSrc {dbconSrc->createResult()};
+
+    qSrc.setForwardOnly(false);
+
+    QString querySrc =
+        " insert into [motor_table]    "
+        "   ( timeline, name, state )  "
+        " values                       "
+        "   (:TIMELINE, :NAME, :STATE) ";
+
+    if (!qSrc.prepare(querySrc))
+        return;
+
+    qint64 timeline = QDateTime::currentMSecsSinceEpoch();
+    bool state = true;
+
+    sql::bindValue(qSrc, ":TIMELINE", timeline);
     sql::bindValue(qSrc, ":STATE", state);
 
     if (!qSrc.exec())

@@ -31,10 +31,24 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
-       <widget class="QPushButton" name="btnInsertData">
+      <item row="1" column="0">
+       <widget class="QPushButton" name="btnInsertData1">
         <property name="text">
-         <string>insert data</string>
+         <string>insert data 1</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="btnInsertData2">
+        <property name="text">
+         <string>insert data 2</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QPushButton" name="btnInsertData3">
+        <property name="text">
+         <string>insert data 3</string>
         </property>
        </widget>
       </item>
