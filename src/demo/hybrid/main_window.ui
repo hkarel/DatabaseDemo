@@ -17,6 +17,13 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="1">
+       <widget class="QPushButton" name="btnSelectData">
+        <property name="text">
+         <string>select data</string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="0">
        <widget class="QPushButton" name="btnCopyData">
         <property name="text">
@@ -24,10 +31,10 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="btnSelectData">
+      <item row="1" column="2">
+       <widget class="QPushButton" name="btnInsertData3">
         <property name="text">
-         <string>select data</string>
+         <string>insert data 3</string>
         </property>
        </widget>
       </item>
@@ -45,10 +52,10 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
-       <widget class="QPushButton" name="btnInsertData3">
+      <item row="1" column="3">
+       <widget class="QPushButton" name="btnInsertData4">
         <property name="text">
-         <string>insert data 3</string>
+         <string>insert data 4</string>
         </property>
        </widget>
       </item>

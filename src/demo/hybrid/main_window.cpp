@@ -234,3 +234,30 @@ void MainWindow::on_btnInsertData3_clicked()
     if (!qSrc.exec())
         return;
 }
+
+void MainWindow::on_btnInsertData4_clicked()
+{
+    db::mssql::Driver::Ptr dbconSrc = mspool().connect();
+    QSqlQuery qSrc {dbconSrc->createResult()};
+
+    qSrc.setForwardOnly(false);
+
+    QString querySrc =
+        " insert into [motor_table]    "
+        "   ( timeline, name, state )  "
+        " values                       "
+        "   (:TIMELINE, :NAME, :STATE) ";
+
+    if (!qSrc.prepare(querySrc))
+        return;
+
+    qint64 timeline = QDateTime::currentMSecsSinceEpoch();
+    bool state = true;
+
+    sql::bindValue(qSrc, ":TIMELINE", timeline);
+    sql::bindValue(qSrc, ":NAME", QVariant().toString());
+    sql::bindValue(qSrc, ":STATE", state);
+
+    if (!qSrc.exec())
+        return;
+}
