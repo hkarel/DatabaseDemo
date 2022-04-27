@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
                 return false;
             }
             db->setWideChar(false);
-            return db->open(name, user, password, "192.168.1.117\\DATABASE-DEMO", port, options);
+            return db->open(name, user, password, "192.168.1.118\\DATABASE-DEMO", port, options);
         };
 
         if (!db::mssql::pool().init(databaseInit1))
