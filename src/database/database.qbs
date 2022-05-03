@@ -15,7 +15,7 @@ Product {
     cpp.cxxFlags: project.cxxFlags
     cpp.cxxLanguageVersion: project.cxxLanguageVersion
 
-    property var exportIncludePaths: [
+    property var includePaths: [
         "./",
         "./database",
     ]
@@ -34,6 +34,6 @@ Product {
 
     Export {
         Depends { name: "cpp" }
-        cpp.includePaths: product.exportIncludePaths
+        cpp.includePaths: exportingProduct.includePaths
     }
 }

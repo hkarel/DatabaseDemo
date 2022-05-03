@@ -44,7 +44,7 @@ void MainWindow::deinit()
     _transact1.reset();
     _transact2.reset();
 
-    _threadIds.lock([](std::vector<pid_t>& tids) {
+    _threadIds.lock([](const std::vector<pid_t>& tids) {
         for (pid_t tid : tids)
             fbpool().abortOperation(tid);
     });

@@ -16,11 +16,11 @@ Product {
     cpp.cxxFlags: project.cxxFlags //.concat(["-Wpedantic"]);
     cpp.cxxLanguageVersion: project.cxxLanguageVersion
 
-    property var exportIncludePaths: [
+    property var includePaths: [
         "./",
         "./shared",
     ]
-    cpp.includePaths: exportIncludePaths;
+    cpp.includePaths: includePaths;
 
     // Эта декларация нужна для подавления Qt warning-ов
     cpp.systemIncludePaths: Qt.core.cpp.includePaths
@@ -71,6 +71,6 @@ Product {
 
     Export {
         Depends { name: "cpp" }
-        cpp.includePaths: product.exportIncludePaths
+        cpp.includePaths: exportingProduct.includePaths
     }
 }

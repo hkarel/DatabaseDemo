@@ -2,7 +2,7 @@ import qbs
 import "qbs/imports/QbsUtl/qbsutl.js" as QbsUtl
 
 Project {
-    minimumQbsVersion: "1.18.0"
+    minimumQbsVersion: "1.19.0"
     qbsSearchPaths: ["qbs"]
 
     readonly property var projectVersion: projectProbe.projectVersion

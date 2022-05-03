@@ -254,7 +254,7 @@ int main(int argc, char *argv[])
         mw.saveGeometry();
         mw.deinit();
 
-        config::state().save();
+        config::state().saveFile();
     }
     catch (YAML::ParserException& e)
     {
