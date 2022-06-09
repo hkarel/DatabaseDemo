@@ -288,3 +288,58 @@ void MainWindow::on_btnInsertData5_clicked()
     if (!qSrc.exec())
         return;
 }
+
+void MainWindow::on_btnMoveData1_clicked()
+{
+    db::postgres::Driver::Ptr dbconSrc = pgpool().connect();
+    QSqlQuery qSrc {dbconSrc->createResult()};
+
+    db::mssql::Driver::Ptr dbconDst = mspool().connect();
+    QSqlQuery qDst {dbconDst->createResult()};
+
+    qSrc.setForwardOnly(false);
+
+    QString querySrc = "select rec_id, dtime_zakl from engine_on_line_tmp";
+
+    if (!qSrc.prepare(querySrc))
+        return;
+
+    if (!qSrc.exec())
+        return;
+
+    QString queryDst =
+        " insert into engine_on_line_tmp2                                   "
+        "   ( rec_id, num_dv, ods_id4, odsb_dv, odsb_sm, dtime_zakl )      "
+        " values                                                           "
+        "   ( :rec_id, :num_dv, :ods_id4, :odsb_dv, :odsb_sm, :dtime_zakl) ";
+
+    if (!qDst.prepare(queryDst))
+        return;
+
+    qint32 i = 0;
+    while (qSrc.next())
+    {
+        QSqlRecord r = qSrc.record();
+
+        qint64 rec_id = 1;
+        QString num_dv = "num_dv";
+        qint64 ods_id4 = 2;
+        QString odsb_dv = "odsb_dv";
+        QString odsb_sm = "odsb_sm";
+        QDateTime dtime_zakl;
+
+        sql::assignValue(rec_id, r, "rec_id");
+        sql::assignValue(dtime_zakl, r, "dtime_zakl");
+
+        sql::bindValue(qDst, ":rec_id", QDateTime::currentSecsSinceEpoch() + i);
+        sql::bindValue(qDst, ":num_dv", num_dv);
+        sql::bindValue(qDst, ":ods_id4", ods_id4);
+        sql::bindValue(qDst, ":odsb_dv", odsb_dv);
+        sql::bindValue(qDst, ":odsb_sm", odsb_sm);
+        sql::bindValue(qDst, ":dtime_zakl", dtime_zakl);
+
+        qDst.exec();
+
+        i++;
+    }
+}
