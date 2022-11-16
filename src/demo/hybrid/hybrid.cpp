@@ -53,40 +53,6 @@ void stopProgram()
 
 int main(int argc, char *argv[])
 {
-//    // Тест скорости доступа к полю структуры 'A'
-//    // при использовании shared_ptr и container_ptr
-//    struct A {int b;};
-//    steady_timer timer;
-//    std::shared_ptr<A> a1 {new A};
-//    container_ptr<A>   a2 {new A};
-//    qint32 tm1, tm2;
-
-//    for (int k = 0; k < 10; ++k)
-//    {
-//        std::srand(std::time(0));
-
-//        timer.reset();
-//        for (int i = 0; i < 10*1000000; ++i)
-//        {
-//            a1->b = std::rand();
-//        }
-//        (void) a1->b;
-//        tm1 = timer.elapsed<std::chrono::microseconds>();
-
-//        timer.reset();
-//        for (int i = 0; i < 10*1000000; ++i)
-//        {
-//            a2->b = std::rand();
-//        }
-//        (void) a2->b;
-//        tm2 = timer.elapsed<std::chrono::microseconds>();
-
-//        int persent = (1.0 - float(tm1) / tm2) * 100;
-//        qWarning("%d  %d  %d", tm1, tm2, persent);
-//    }
-//    return 0;
-
-
     // Устанавливаем в качестве разделителя целой и дробной части символ '.',
     // если этого не сделать - функции преобразования строк в числа (std::atof)
     // буду неправильно работать.
