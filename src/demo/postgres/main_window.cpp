@@ -197,22 +197,24 @@ void MainWindow::on_btnSelect3_clicked(bool)
     q.setForwardOnly(false);
 
     if (sql::exec(q,
-        " SELECT        "
-        "   ID          "
-        "  ,F_BOOL      "
-        "  ,F_INT       "
-        "  ,F_INT64     "
-        "  ,F_ENUM      "
-        "  ,F_FLOAT     "
-        "  ,F_DATE      "
-        "  ,F_TIME      "
-        "  ,F_DATETIME  "
-        "  ,F_STRING    "
-        "  ,F_ARR_INT   "
-        "  ,F_ARR_UUID  "
-        " FROM          "
-        "   TABLE1      "
-        " LIMIT 5       "))
+        " SELECT         "
+        "   ID           "
+        "  ,F_BOOL       "
+        "  ,F_INT        "
+        "  ,F_INT64      "
+        "  ,F_ENUM       "
+        "  ,F_FLOAT      "
+        "  ,F_DATE       "
+        "  ,F_TIME       "
+        "  ,F_DATETIME   "
+        "  ,F_STRING     "
+        "  ,F_ARR_INT    "
+        "  ,F_ARR_UUID   "
+        "  ,F_ARR_FLOAT  "
+        "  ,F_ARR_DOUBLE "
+        " FROM           "
+        "   TABLE1       "
+        " LIMIT 5        "))
     {
         log_info << "--- Select-query 3 exec success ---";
     }
@@ -233,32 +235,38 @@ void MainWindow::on_btnSelect3_clicked(bool)
         QString    f_string;
         QVector<qint32> f_arr_int;
         QVector<QUuidEx> f_arr_uuid;
+        QVector<float> f_arr_float;
+        QVector<double> f_arr_double;
 
-        sql::assignValue(id         , r, "ID         ");
-        sql::assignValue(f_bool     , r, "F_BOOL     ");
-        sql::assignValue(f_int      , r, "F_INT      ");
-        sql::assignValue(f_int64    , r, "F_INT64    ");
-        sql::assignValue(f_enum     , r, "F_ENUM     ");
-        sql::assignValue(f_float    , r, "F_FLOAT    ");
-        sql::assignValue(f_date     , r, "F_DATE     ");
-        sql::assignValue(f_time     , r, "F_TIME     ");
-        sql::assignValue(f_datetime , r, "F_DATETIME ");
-        sql::assignValue(f_string   , r, "F_STRING   ");
-        sql::assignValue(f_arr_int  , r, "F_ARR_INT  ");
-        sql::assignValue(f_arr_uuid , r, "F_ARR_UUID ");
+        sql::assignValue(id          , r, "ID           ");
+        sql::assignValue(f_bool      , r, "F_BOOL       ");
+        sql::assignValue(f_int       , r, "F_INT        ");
+        sql::assignValue(f_int64     , r, "F_INT64      ");
+        sql::assignValue(f_enum      , r, "F_ENUM       ");
+        sql::assignValue(f_float     , r, "F_FLOAT      ");
+        sql::assignValue(f_date      , r, "F_DATE       ");
+        sql::assignValue(f_time      , r, "F_TIME       ");
+        sql::assignValue(f_datetime  , r, "F_DATETIME   ");
+        sql::assignValue(f_string    , r, "F_STRING     ");
+        sql::assignValue(f_arr_int   , r, "F_ARR_INT    ");
+        sql::assignValue(f_arr_uuid  , r, "F_ARR_UUID   ");
+        sql::assignValue(f_arr_float , r, "F_ARR_FLOAT  ");
+        sql::assignValue(f_arr_double, r, "F_ARR_DOUBLE ");
 
-        log_debug << "ID         " << id        ;
-        log_debug << "F_BOOL     " << f_bool    ;
-        log_debug << "F_INT      " << f_int     ;
-        log_debug << "F_INT64    " << f_int64   ;
-        log_debug << "F_ENUM     " << f_enum    ;
-        log_debug << "F_FLOAT    " << f_float   ;
-        log_debug << "F_DATE     " << f_date    ;
-        log_debug << "F_TIME     " << f_time    ;
-        log_debug << "F_DATETIME " << f_datetime;
-        log_debug << "F_STRING   " << f_string  ;
-        log_debug << "F_ARR_INT  " << QVariant::fromValue(f_arr_int);
-        log_debug << "F_ARR_UUID " << QVariant::fromValue(f_arr_uuid);
+        log_debug << "ID           " << id        ;
+        log_debug << "F_BOOL       " << f_bool    ;
+        log_debug << "F_INT        " << f_int     ;
+        log_debug << "F_INT64      " << f_int64   ;
+        log_debug << "F_ENUM       " << f_enum    ;
+        log_debug << "F_FLOAT      " << f_float   ;
+        log_debug << "F_DATE       " << f_date    ;
+        log_debug << "F_TIME       " << f_time    ;
+        log_debug << "F_DATETIME   " << f_datetime;
+        log_debug << "F_STRING     " << f_string  ;
+        log_debug << "F_ARR_INT    " << QVariant::fromValue(f_arr_int);
+        log_debug << "F_ARR_UUID   " << QVariant::fromValue(f_arr_uuid);
+        log_debug << "F_ARR_FLOAT  " << QVariant::fromValue(f_arr_float);
+        log_debug << "F_ARR_DOUBLE " << QVariant::fromValue(f_arr_double);
         log_debug << "-----------";
     }
 }
@@ -409,6 +417,8 @@ void MainWindow::on_btnInsert1_clicked(bool)
         "  ,F_UUID                                  "
         "  ,F_ARR_INT                               "
         "  ,F_ARR_UUID                              "
+        "  ,F_ARR_FLOAT                             "
+        "  ,F_ARR_DOUBLE                            "
         " ) VALUES (                                "
         "   'e7da463a-e96d-43e0-baeb-99278a1845ee'  "
         "  ,true                                    "
@@ -426,6 +436,8 @@ void MainWindow::on_btnInsert1_clicked(bool)
         "  ,:F_UUID                                 "
         "  ,:F_ARR_INT                              "
         "  ,:F_ARR_UUID                             "
+        "  ,:F_ARR_FLOAT                            "
+        "  ,:F_ARR_DOUBLE                           "
         " )                                         ";
 
     if (!q.prepare(sql))
@@ -441,12 +453,25 @@ void MainWindow::on_btnInsert1_clicked(bool)
     f_arr_uuid.append(QUuidEx("1e8b4002-ebe0-4ad9-8c2d-607b61d76b61"));
     f_arr_uuid.append(QUuidEx("97e724e5-89d3-44fb-a207-a6a43dcd7359"));
 
-    sql::bindValue(q, ":F_UINT64    " , f_uint64           );
-    sql::bindValue(q, ":F_ENUM      " , InsertMode::Single );
-    sql::bindValue(q, ":F_BYTEARRAY " , f_bytearray        );
-    sql::bindValue(q, ":F_UUID      " , f_uuid             );
-    sql::bindValue(q, ":F_ARR_INT   " , f_arr_int          );
-    sql::bindValue(q, ":F_ARR_UUID  " , f_arr_uuid         );
+    QVector<float> f_arr_float;
+    f_arr_float.append(0.56);
+    f_arr_float.append(7.89);
+    f_arr_float.append(15.336);
+    f_arr_float.append(22.082);
+
+    QVector<double> f_arr_double;
+    f_arr_double.append(0.35);
+    f_arr_double.append(8.46);
+    f_arr_double.append(10.214);
+
+    sql::bindValue(q, ":F_UINT64     " , f_uint64           );
+    sql::bindValue(q, ":F_ENUM       " , InsertMode::Single );
+    sql::bindValue(q, ":F_BYTEARRAY  " , f_bytearray        );
+    sql::bindValue(q, ":F_UUID       " , f_uuid             );
+    sql::bindValue(q, ":F_ARR_INT    " , f_arr_int          );
+    sql::bindValue(q, ":F_ARR_UUID   " , f_arr_uuid         );
+    sql::bindValue(q, ":F_ARR_FLOAT  " , f_arr_float        );
+    sql::bindValue(q, ":F_ARR_DOUBLE " , f_arr_double       );
 
     if (q.exec())
     {

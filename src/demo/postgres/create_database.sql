@@ -34,6 +34,8 @@ CREATE TABLE public.table1
     f_uuid uuid,
     f_arr_int integer[],
     f_arr_uuid uuid[],
+    f_arr_float real[],
+    f_arr_double double precision[],
     CONSTRAINT teble1_pkey PRIMARY KEY (id)
 )
 
