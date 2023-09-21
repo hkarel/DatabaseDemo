@@ -15,3 +15,11 @@
 - /tmp/db-demo-postgres.log
 
 При первом запуске примеры проверяют наличие тестовой базы данных. Если базы не обнаружено в лог-файл будет выведен скрипт для ее создания.
+
+Установка ODBC драйвера для MS SQL ([источник](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server?view=sql-server-ver16&tabs=ubuntu18-install%2Cubuntu17-install%2Cdebian8-install%2Credhat7-13-install%2Crhel7-offline)):  
+1) `curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc`   
+2) `curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list`   
+3) `sudo apt-get update`  
+4) `sudo apt-get install -y msodbcsql18`  
+5) `sudo apt-get install -y unixodbc-dev`
+
