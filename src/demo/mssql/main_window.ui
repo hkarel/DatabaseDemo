@@ -170,6 +170,13 @@
         </property>
        </widget>
       </item>
+      <item row="3" column="4">
+       <widget class="QPushButton" name="btnInsert4">
+        <property name="text">
+         <string>Insert 4 (NULL)</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item>
@@ -190,7 +197,7 @@
      <x>0</x>
      <y>0</y>
      <width>817</width>
-     <height>20</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>

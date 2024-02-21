@@ -48,6 +48,7 @@ private slots:
     void on_btnInsert1_clicked(bool);
     void on_btnInsert2_clicked(bool);
     void on_btnInsert3_clicked(bool);
+    void on_btnInsert4_clicked(bool);
 
     void on_btnDeleteAll_clicked(bool);
     void on_btnAbortQuery_clicked(bool);

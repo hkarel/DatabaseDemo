@@ -20,6 +20,6 @@
 1) `curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc`   
 2) `curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list`   
 3) `sudo apt-get update`  
-4) `sudo apt-get install -y msodbcsql18`  
-5) `sudo apt-get install -y unixodbc-dev`
+4) `sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18`  
+5) `sudo ACCEPT_EULA=Y apt-get install -y unixodbc-dev`
 
