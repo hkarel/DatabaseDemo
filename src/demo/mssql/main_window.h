@@ -44,6 +44,7 @@ private slots:
     void on_btnUpdate1_clicked(bool);
     void on_btnUpdate2_clicked(bool);
     void on_btnUpdate3_clicked(bool);
+    void on_btnUpdate4_clicked(bool);
 
     void on_btnInsert1_clicked(bool);
     void on_btnInsert2_clicked(bool);

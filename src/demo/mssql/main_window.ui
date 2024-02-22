@@ -163,17 +163,24 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="5">
-       <widget class="QPushButton" name="btnUpdate3">
+      <item row="3" column="4">
+       <widget class="QPushButton" name="btnInsert4">
+        <property name="text">
+         <string>Insert 4 (NULL)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="5">
+       <widget class="QPushButton" name="btnUpdate4">
         <property name="text">
          <string>Merge Table</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="4">
-       <widget class="QPushButton" name="btnInsert4">
+      <item row="2" column="5">
+       <widget class="QPushButton" name="btnUpdate3">
         <property name="text">
-         <string>Insert 4 (NULL)</string>
+         <string>Merge Row (2)</string>
         </property>
        </widget>
       </item>

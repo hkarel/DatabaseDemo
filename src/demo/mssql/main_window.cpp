@@ -424,30 +424,30 @@ void MainWindow::on_btnUpdate2_clicked(bool)
     db::mssql::Driver::Ptr dbcon = mspool().connect();
     QSqlQuery q {dbcon->createResult()};
 
-    QList<QString> match =
+    QStringList match =
     {
-        "[f_guid]"
+        "[F_GUID]"
     };
 
-    QList<QString> fields =
+    QStringList fields =
     {
-        "[F_GUID]",
-        "[F_BIGINT]",
-        "[F_BINARY]",
-        "[F_CHAR]",
-        "[F_NCHAR]",
-        "[F_TIME]",
-        "[F_DATE]",
-        "[F_DATETIME]",
-        "[F_DATETIME2]",
-        "[F_DATETIMEOFFSET]",
-        "[F_FLOAT]",
-        "[F_REAL]",
-        "[F_INT]",
-        "[F_SMALLINT]",
-        "[F_TINYINT]",
-        "[F_VARBINARY_MAX]",
-        "[F_NVARCHAR_MAX]",
+        " [F_GUID]           "
+        ",[F_BIGINT]         "
+        ",[F_BINARY]         "
+        ",[F_CHAR]           "
+        ",[F_NCHAR]          "
+        ",[F_TIME]           "
+        ",[F_DATE]           "
+        ",[F_DATETIME]       "
+        ",[F_DATETIME2]      "
+        ",[F_DATETIMEOFFSET] "
+        ",[F_FLOAT]          "
+        ",[F_REAL]           "
+        ",[F_INT]            "
+        ",[F_SMALLINT]       "
+        ",[F_TINYINT]        "
+        ",[F_VARBINARY_MAX]  "
+        ",[F_NVARCHAR_MAX]   "
     };
 
     QString sql = sql::MERGE_ROW_MS("table2", fields, match);
@@ -489,30 +489,146 @@ void MainWindow::on_btnUpdate3_clicked(bool)
     db::mssql::Driver::Ptr dbcon = mspool().connect();
     QSqlQuery q {dbcon->createResult()};
 
-    QList<QString> match =
+    q.setForwardOnly(false);
+
+    QString fields =
+        " [F_GUID]           "
+        ",[F_BIGINT]         "
+        ",[F_BINARY]         "
+        ",[F_CHAR]           "
+        ",[F_NCHAR]          "
+        ",[F_TIME]           "
+        ",[F_DATE]           "
+        ",[F_DATETIME]       "
+        ",[F_DATETIME2]      "
+        ",[F_DATETIMEOFFSET] "
+        ",[F_FLOAT]          "
+        ",[F_REAL]           "
+        ",[F_INT]            "
+        ",[F_SMALLINT]       "
+        ",[F_TINYINT]        "
+        ",[F_VARBINARY_MAX]  "
+        ",[F_NVARCHAR_MAX]   ";
+
+    QString query = "SELECT %1 FROM TABLE1";
+    query = query.arg(fields);
+
+    if (!sql::exec(q, query))
+        return;
+
+    db::mssql::Driver::Ptr dbcon2 = mspool().connect();
+    db::mssql::Transaction::Ptr transact2 = dbcon2->createTransact();
+    QSqlQuery q2 {db::mssql::createResult(transact2)};
+
+    if (!transact2->begin())
+        return;
+
+    QString sql2 = sql::MERGE_ROW_MS("table2", fields, "[F_GUID]");
+
+    if (!q2.prepare(sql2))
+        return;
+
+    while (q.next())
     {
-        "[f_guid]"
+        QSqlRecord r = q.record();
+
+        QUuidEx    f_guid;
+        qint64     f_bigint;
+        QByteArray f_binary;
+        QString    f_char;
+        QString    f_nchar;
+        QTime      f_time;
+        QDate      f_date;
+        QDateTime  f_datetime;
+        QDateTime  f_datetime2;
+        QDateTime  f_datetimeoffset;
+        float      f_float;
+        double     f_real;
+        qint32     f_int;
+        qint16     f_smallint;
+        qint8      f_tinyint;
+        QByteArray f_varbinary_max;
+        QString    f_nvarchar_max;
+
+        sql::assignValue(f_guid          , r, "F_GUID           ");
+        sql::assignValue(f_bigint        , r, "F_BIGINT         ");
+        sql::assignValue(f_binary        , r, "F_BINARY         ");
+        sql::assignValue(f_char          , r, "F_CHAR           ");
+        sql::assignValue(f_nchar         , r, "F_NCHAR          ");
+        sql::assignValue(f_time          , r, "F_TIME           ");
+        sql::assignValue(f_date          , r, "F_DATE           ");
+        sql::assignValue(f_datetime      , r, "F_DATETIME       ");
+        sql::assignValue(f_datetime2     , r, "F_DATETIME2      ");
+        sql::assignValue(f_datetimeoffset, r, "F_DATETIMEOFFSET ");
+        sql::assignValue(f_float         , r, "F_FLOAT          ");
+        sql::assignValue(f_real          , r, "F_REAL           ");
+        sql::assignValue(f_int           , r, "F_INT            ");
+        sql::assignValue(f_smallint      , r, "F_SMALLINT       ");
+        sql::assignValue(f_tinyint       , r, "F_TINYINT        ");
+        sql::assignValue(f_varbinary_max , r, "F_VARBINARY_MAX  ");
+        sql::assignValue(f_nvarchar_max  , r, "F_NVARCHAR_MAX   ");
+
+        sql::bindValue(q2, ":F_GUID          ", f_guid           );
+        sql::bindValue(q2, ":F_BIGINT        ", f_bigint         );
+        sql::bindValue(q2, ":F_BINARY        ", f_binary         );
+        sql::bindValue(q2, ":F_CHAR          ", f_char.trimmed() );
+        sql::bindValue(q2, ":F_NCHAR         ", f_nchar.trimmed());
+      //sql::bindValue(q2, ":F_CHAR          ", QString()        );
+      //sql::bindValue(q2, ":F_NCHAR         ", QString()        );
+        sql::bindValue(q2, ":F_TIME          ", f_time           );
+        sql::bindValue(q2, ":F_DATE          ", f_date           );
+        sql::bindValue(q2, ":F_DATETIME      ", f_datetime       );
+        sql::bindValue(q2, ":F_DATETIME2     ", f_datetime2      );
+        sql::bindValue(q2, ":F_DATETIMEOFFSET", f_datetimeoffset );
+        sql::bindValue(q2, ":F_FLOAT         ", f_float          );
+        sql::bindValue(q2, ":F_REAL          ", f_real           );
+        sql::bindValue(q2, ":F_INT           ", f_int            );
+        sql::bindValue(q2, ":F_SMALLINT      ", f_smallint       );
+        sql::bindValue(q2, ":F_TINYINT       ", f_tinyint        );
+        sql::bindValue(q2, ":F_VARBINARY_MAX ", f_varbinary_max  );
+        sql::bindValue(q2, ":F_NVARCHAR_MAX  ", f_nvarchar_max   );
+
+        if (!q2.exec())
+            return;
+    }
+
+    if (transact2->commit())
+    {
+        log_info << "--- Update-query 3 transact success ---";
+    }
+}
+
+void MainWindow::on_btnUpdate4_clicked(bool)
+{
+    _queryModel.setQuery(QSqlQuery());
+
+    db::mssql::Driver::Ptr dbcon = mspool().connect();
+    QSqlQuery q {dbcon->createResult()};
+
+    QStringList match =
+    {
+        "[F_GUID]"
     };
 
-    QList<QString> fields =
+    QStringList fields =
     {
-        "[F_GUID]",
-        "[F_BIGINT]",
-        "[F_BINARY]",
-        "[F_CHAR]",
-        "[F_NCHAR]",
-        "[F_TIME]",
-        "[F_DATE]",
-        "[F_DATETIME]",
-        "[F_DATETIME2]",
-        "[F_DATETIMEOFFSET]",
-        "[F_FLOAT]",
-        "[F_REAL]",
-        "[F_INT]",
-        "[F_SMALLINT]",
-        "[F_TINYINT]",
-        "[F_VARBINARY_MAX]",
-        "[F_NVARCHAR_MAX]",
+        " [F_GUID]           "
+        ",[F_BIGINT]         "
+        ",[F_BINARY]         "
+        ",[F_CHAR]           "
+        ",[F_NCHAR]          "
+        ",[F_TIME]           "
+        ",[F_DATE]           "
+        ",[F_DATETIME]       "
+        ",[F_DATETIME2]      "
+        ",[F_DATETIMEOFFSET] "
+        ",[F_FLOAT]          "
+        ",[F_REAL]           "
+        ",[F_INT]            "
+        ",[F_SMALLINT]       "
+        ",[F_TINYINT]        "
+        ",[F_VARBINARY_MAX]  "
+        ",[F_NVARCHAR_MAX]   "
     };
 
     QString sql = sql::MERGE_TABLE_MS("table2", "table1", fields, match);
@@ -522,14 +638,7 @@ void MainWindow::on_btnUpdate3_clicked(bool)
 
     if (q.exec())
     {
-        log_info << "--- Update-query 2 exec success ---";
-    }
-
-    _queryModel.setQuery(QSqlQuery());
-
-    if (q.exec())
-    {
-        log_info << "--- Update-query 2 exec success ---";
+        log_info << "--- Update-query 4 exec success ---";
     }
 }
 
