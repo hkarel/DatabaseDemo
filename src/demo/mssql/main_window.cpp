@@ -165,6 +165,7 @@ void MainWindow::on_btnSelect2_clicked(bool)
         "  [F_GUID]           "
         " ,[F_BIGINT]         "
         " ,[F_BINARY]         "
+        " ,[F_BOOL]           "
         " ,[F_CHAR]           "
         " ,[F_NCHAR]          "
         " ,[F_TIME]           "
@@ -213,6 +214,7 @@ void MainWindow::on_btnSelect3_clicked(bool)
         "  [F_GUID]           "
         " ,[F_BIGINT]         "
         " ,[F_BINARY]         "
+        " ,[F_BOOL]           "
         " ,[F_CHAR]           "
         " ,[F_NCHAR]          "
         " ,[F_TIME]           "
@@ -246,6 +248,7 @@ void MainWindow::on_btnSelect3_clicked(bool)
         QUuidEx    f_guid;
         qint64     f_bigint;
         QByteArray f_binary;
+        bool       f_bool;
         QString    f_char;
         QString    f_nchar;
         QTime      f_time;
@@ -267,6 +270,7 @@ void MainWindow::on_btnSelect3_clicked(bool)
         sql::assignValue(f_guid          , r, "F_GUID           ");
         sql::assignValue(f_bigint        , r, "F_BIGINT         ");
         sql::assignValue(f_binary        , r, "F_BINARY         ");
+        sql::assignValue(f_bool          , r, "F_BOOL           ");
         sql::assignValue(f_char          , r, "F_CHAR           ");
         sql::assignValue(f_nchar         , r, "F_NCHAR          ");
         sql::assignValue(f_time          , r, "F_TIME           ");
@@ -282,23 +286,24 @@ void MainWindow::on_btnSelect3_clicked(bool)
         sql::assignValue(f_varbinary_max , r, "F_VARBINARY_MAX  ");
         sql::assignValue(f_nvarchar_max  , r, "F_NVARCHAR_MAX   ");
 
-        log_debug << "F_GUID          " << f_guid          ;
-        log_debug << "F_BIGINT        " << f_bigint        ;
-        log_debug << "F_BINARY        " << f_binary        ;
-        log_debug << "F_CHAR          " << f_char          ;
-        log_debug << "F_NCHAR         " << f_nchar         ;
-        log_debug << "F_TIME          " << f_time          ;
-        log_debug << "F_DATE          " << f_date          ;
-        log_debug << "F_DATETIME      " << f_datetime      ;
-        log_debug << "F_DATETIME2     " << f_datetime2     ;
-        log_debug << "F_DATETIMEOFFSET" << f_datetimeoffset;
-        log_debug << "F_FLOAT         " << f_float         ;
-        log_debug << "F_REAL          " << f_real          ;
-        log_debug << "F_INT           " << f_int           ;
-        log_debug << "F_SMALLINT      " << f_smallint      ;
-        log_debug << "F_TINYINT       " << f_tinyint       ;
-        log_debug << "F_VARBINARY_MAX " << f_varbinary_max ;
-        log_debug << "F_NVARCHAR_MAX  " << f_nvarchar_max  ;
+        log_debug << "F_GUID           " << f_guid          ;
+        log_debug << "F_BIGINT         " << f_bigint        ;
+        log_debug << "F_BINARY         " << f_binary        ;
+        log_debug << "F_BOOL           " << f_bool          ;
+        log_debug << "F_CHAR           " << f_char          ;
+        log_debug << "F_NCHAR          " << f_nchar         ;
+        log_debug << "F_TIME           " << f_time          ;
+        log_debug << "F_DATE           " << f_date          ;
+        log_debug << "F_DATETIME       " << f_datetime      ;
+        log_debug << "F_DATETIME2      " << f_datetime2     ;
+        log_debug << "F_DATETIMEOFFSET " << f_datetimeoffset;
+        log_debug << "F_FLOAT          " << f_float         ;
+        log_debug << "F_REAL           " << f_real          ;
+        log_debug << "F_INT            " << f_int           ;
+        log_debug << "F_SMALLINT       " << f_smallint      ;
+        log_debug << "F_TINYINT        " << f_tinyint       ;
+        log_debug << "F_VARBINARY_MAX  " << f_varbinary_max ;
+        log_debug << "F_NVARCHAR_MAX   " << f_nvarchar_max  ;
 
         log_debug << "-----------";
     }
@@ -318,6 +323,7 @@ void MainWindow::on_btnInsAndSelect4_clicked(bool)
               "  [F_GUID]           "
               " ,[F_BIGINT]         "
               " ,[F_BINARY]         "
+              " ,[F_BOOL]           "
               " ,[F_CHAR]           "
               " ,[F_NCHAR]          "
               " ,[F_TIME]           "
@@ -341,6 +347,7 @@ void MainWindow::on_btnInsAndSelect4_clicked(bool)
               "  :F_GUID            "
               " ,:F_BIGINT          "
               " ,:F_BINARY          "
+              " ,:F_BOOL            "
               " ,:F_CHAR            "
               " ,:F_NCHAR           "
               " ,:F_TIME            "
@@ -362,6 +369,7 @@ void MainWindow::on_btnInsAndSelect4_clicked(bool)
     sql::bindValue(q, ":F_GUID            ", id);
     sql::bindValue(q, ":F_BIGINT          ", 1234 );
     sql::bindValue(q, ":F_BINARY          ", QByteArray("F_BINARY") );
+    sql::bindValue(q, ":F_BOOL            ", true );
     sql::bindValue(q, ":F_CHAR            ", "strfromqt"  );
     sql::bindValue(q, ":F_NCHAR           ", 0x89);
     sql::bindValue(q, ":F_TIME            ", dtime);
@@ -434,6 +442,7 @@ void MainWindow::on_btnUpdate2_clicked(bool)
         " [F_GUID]           "
         ",[F_BIGINT]         "
         ",[F_BINARY]         "
+        ",[F_BOOL]           "
         ",[F_CHAR]           "
         ",[F_NCHAR]          "
         ",[F_TIME]           "
@@ -461,6 +470,7 @@ void MainWindow::on_btnUpdate2_clicked(bool)
     sql::bindValue(q, ":F_GUID          ", QUuidEx().createUuid() );
     sql::bindValue(q, ":F_BIGINT        ", 1234 );
     sql::bindValue(q, ":F_BINARY        ", QByteArray("F_BINARY") );
+    sql::bindValue(q, ":F_BOOL          ", true );
     sql::bindValue(q, ":F_CHAR          ", 0x57  );
     sql::bindValue(q, ":F_NCHAR         ", 0x89);
     sql::bindValue(q, ":F_TIME          ", dtime);
@@ -495,6 +505,7 @@ void MainWindow::on_btnUpdate3_clicked(bool)
         " [F_GUID]           "
         ",[F_BIGINT]         "
         ",[F_BINARY]         "
+        ",[F_BOOL]           "
         ",[F_CHAR]           "
         ",[F_NCHAR]          "
         ",[F_TIME]           "
@@ -535,6 +546,7 @@ void MainWindow::on_btnUpdate3_clicked(bool)
         QUuidEx    f_guid;
         qint64     f_bigint;
         QByteArray f_binary;
+        bool       f_bool;
         QString    f_char;
         QString    f_nchar;
         QTime      f_time;
@@ -553,6 +565,7 @@ void MainWindow::on_btnUpdate3_clicked(bool)
         sql::assignValue(f_guid          , r, "F_GUID           ");
         sql::assignValue(f_bigint        , r, "F_BIGINT         ");
         sql::assignValue(f_binary        , r, "F_BINARY         ");
+        sql::assignValue(f_bool          , r, "F_BOOL           ");
         sql::assignValue(f_char          , r, "F_CHAR           ");
         sql::assignValue(f_nchar         , r, "F_NCHAR          ");
         sql::assignValue(f_time          , r, "F_TIME           ");
@@ -571,6 +584,7 @@ void MainWindow::on_btnUpdate3_clicked(bool)
         sql::bindValue(q2, ":F_GUID          ", f_guid           );
         sql::bindValue(q2, ":F_BIGINT        ", f_bigint         );
         sql::bindValue(q2, ":F_BINARY        ", f_binary         );
+        sql::bindValue(q2, ":F_BOOL          ", f_bool           );
         sql::bindValue(q2, ":F_CHAR          ", f_char.trimmed() );
         sql::bindValue(q2, ":F_NCHAR         ", f_nchar.trimmed());
       //sql::bindValue(q2, ":F_CHAR          ", QString()        );
@@ -605,16 +619,13 @@ void MainWindow::on_btnUpdate4_clicked(bool)
     db::mssql::Driver::Ptr dbcon = mspool().connect();
     QSqlQuery q {dbcon->createResult()};
 
-    QStringList match =
-    {
-        "[F_GUID]"
-    };
+    QString match = "[F_GUID]";
 
-    QStringList fields =
-    {
+    QString fields =
         " [F_GUID]           "
         ",[F_BIGINT]         "
         ",[F_BINARY]         "
+        ",[F_BOOL]           "
         ",[F_CHAR]           "
         ",[F_NCHAR]          "
         ",[F_TIME]           "
@@ -628,8 +639,7 @@ void MainWindow::on_btnUpdate4_clicked(bool)
         ",[F_SMALLINT]       "
         ",[F_TINYINT]        "
         ",[F_VARBINARY_MAX]  "
-        ",[F_NVARCHAR_MAX]   "
-    };
+        ",[F_NVARCHAR_MAX]   ";
 
     QString sql = sql::MERGE_TABLE_MS("table2", "table1", fields, match);
 
@@ -655,6 +665,7 @@ void MainWindow::on_btnInsert1_clicked(bool)
               "  [F_GUID]           "
               " ,[F_BIGINT]         "
               " ,[F_BINARY]         "
+              " ,[F_BOOL]           "
               " ,[F_CHAR]           "
               " ,[F_NCHAR]          "
               " ,[F_TIME]           "
@@ -678,6 +689,7 @@ void MainWindow::on_btnInsert1_clicked(bool)
               "  :F_GUID            "
               " ,:F_BIGINT          "
               " ,:F_BINARY          "
+              " ,:F_BOOL            "
               " ,:F_CHAR            "
               " ,:F_NCHAR           "
               " ,:F_DATE            "
@@ -703,6 +715,7 @@ void MainWindow::on_btnInsert1_clicked(bool)
     sql::bindValue(q, ":F_GUID          ", uuid);
     sql::bindValue(q, ":F_BIGINT        ", 123456214878);
     sql::bindValue(q, ":F_BINARY        ", QByteArray("F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY"));
+    sql::bindValue(q, ":F_BOOL          ", true);
     sql::bindValue(q, ":F_CHAR          ", QString(u8"F_CHAR поле"));
     sql::bindValue(q, ":F_NCHAR         ", QString(u8"F_NCHAR поле"));
     sql::bindValue(q, ":F_TIME          ", dtime );
@@ -744,6 +757,7 @@ void MainWindow::on_btnInsert2_clicked(bool)
               "  [F_GUID]           "
               " ,[F_BIGINT]         "
               " ,[F_BINARY]         "
+              " ,[F_BOOL]           "
               " ,[F_CHAR]           "
               " ,[F_NCHAR]          "
               " ,[F_TIME]           "
@@ -767,6 +781,7 @@ void MainWindow::on_btnInsert2_clicked(bool)
               "  :F_GUID            "
               " ,:F_BIGINT          "
               " ,:F_BINARY          "
+              " ,:F_BOOL            "
               " ,:F_CHAR            "
               " ,:F_NCHAR           "
               " ,:F_DATE            "
@@ -793,6 +808,7 @@ void MainWindow::on_btnInsert2_clicked(bool)
     sql::bindValue(q, ":F_GUID          ", QVariant(QVariant::Uuid));
     sql::bindValue(q, ":F_BIGINT        ", 123456214878);
     sql::bindValue(q, ":F_BINARY        ", QByteArray("F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY"));
+    sql::bindValue(q, ":F_BOOL          ", true  );
     sql::bindValue(q, ":F_CHAR          ", 0x57  );
     sql::bindValue(q, ":F_NCHAR         ", 0x89  );
     sql::bindValue(q, ":F_TIME          ", dtime );
@@ -832,6 +848,7 @@ void insertThread(db::mssql::Transaction::Ptr transact, int index)
               "  [F_GUID]           "
               " ,[F_BIGINT]         "
               " ,[F_BINARY]         "
+              " ,[F_BOOL]           "
               " ,[F_CHAR]           "
               " ,[F_NCHAR]          "
               " ,[F_TIME]           "
@@ -855,6 +872,7 @@ void insertThread(db::mssql::Transaction::Ptr transact, int index)
               "  :F_GUID            "
               " ,:F_BIGINT          "
               " ,:F_BINARY          "
+              " ,:F_BOOL            "
               " ,:F_CHAR            "
               " ,:F_NCHAR           "
               " ,:F_DATE            "
@@ -881,6 +899,7 @@ void insertThread(db::mssql::Transaction::Ptr transact, int index)
         sql::bindValue(q, ":F_GUID          ", QUuidEx().createUuid());
         sql::bindValue(q, ":F_BIGINT        ", index);
         sql::bindValue(q, ":F_BINARY        ", QByteArray("F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY F_BINARY"));
+        sql::bindValue(q, ":F_BOOL          ", true  );
         sql::bindValue(q, ":F_CHAR          ", 0x57  );
         sql::bindValue(q, ":F_NCHAR         ", 0x89  );
         sql::bindValue(q, ":F_TIME          ", dtime );
@@ -947,6 +966,7 @@ void MainWindow::on_btnInsert4_clicked(bool)
               "  [F_GUID]           "
               " ,[F_BIGINT]         "
               " ,[F_BINARY]         "
+              " ,[F_BOOL]           "
               " ,[F_CHAR]           "
               " ,[F_NCHAR]          "
               " ,[F_TIME]           "
@@ -970,6 +990,7 @@ void MainWindow::on_btnInsert4_clicked(bool)
               "  :F_GUID            "
               " ,:F_BIGINT          "
               " ,:F_BINARY          "
+              " ,:F_BOOL            "
               " ,:F_CHAR            "
               " ,:F_NCHAR           "
               " ,:F_DATE            "
@@ -994,6 +1015,7 @@ void MainWindow::on_btnInsert4_clicked(bool)
     sql::bindValue(q, ":F_GUID          ", uuid);
     sql::bindValue(q, ":F_BIGINT        ", QVariant(QVariant::Int));
     sql::bindValue(q, ":F_BINARY        ", QVariant(QVariant::ByteArray));
+    sql::bindValue(q, ":F_BOOL          ", QVariant(QVariant::Bool));
     sql::bindValue(q, ":F_CHAR          ", QVariant(QVariant::Char));
     sql::bindValue(q, ":F_NCHAR         ", QVariant(QVariant::Char));
     sql::bindValue(q, ":F_TIME          ", QVariant(QVariant::Time));
