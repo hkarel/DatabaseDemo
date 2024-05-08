@@ -161,20 +161,21 @@ void MainWindow::on_btnSelect2_clicked(bool)
     q.setForwardOnly(false);
 
     if (sql::exec(q,
-        " SELECT        "
-        "   ID          "
-        "  ,F_BOOL      "
-        "  ,F_INT       "
-        "  ,F_INT64     "
-        "  ,F_ENUM      "
-        "  ,F_FLOAT     "
-        "  ,F_DATE      "
-        "  ,F_TIME      "
-        "  ,F_DATETIME  "
-        "  ,F_STRING    "
-        " FROM          "
-        "   TABLE1      "
-        " LIMIT ?       ", 10))
+        " SELECT         "
+        "   ID           "
+        "  ,F_BOOL       "
+        "  ,F_INT        "
+        "  ,F_INT64      "
+        "  ,F_ENUM       "
+        "  ,F_FLOAT      "
+        "  ,F_DATE       "
+        "  ,F_TIME       "
+        "  ,F_DATETIME   "
+        "  ,F_DATETIMETZ "
+        "  ,F_STRING     "
+        " FROM           "
+        "   TABLE1       "
+        " LIMIT ?        ", 10))
     {
         log_info << "--- Select-query 2 exec success ---";
     }
@@ -207,6 +208,7 @@ void MainWindow::on_btnSelect3_clicked(bool)
         "  ,F_DATE       "
         "  ,F_TIME       "
         "  ,F_DATETIME   "
+        "  ,F_DATETIMETZ "
         "  ,F_STRING     "
         "  ,F_ARR_INT    "
         "  ,F_ARR_UUID   "
@@ -232,6 +234,7 @@ void MainWindow::on_btnSelect3_clicked(bool)
         QDate      f_date;
         QTime      f_time;
         QDateTime  f_datetime;
+        QDateTime  f_datetimetz;
         QString    f_string;
         QVector<qint32> f_arr_int;
         QVector<QUuidEx> f_arr_uuid;
@@ -247,26 +250,29 @@ void MainWindow::on_btnSelect3_clicked(bool)
         sql::assignValue(f_date      , r, "F_DATE       ");
         sql::assignValue(f_time      , r, "F_TIME       ");
         sql::assignValue(f_datetime  , r, "F_DATETIME   ");
+        sql::assignValue(f_datetimetz, r, "F_DATETIMETZ ");
         sql::assignValue(f_string    , r, "F_STRING     ");
         sql::assignValue(f_arr_int   , r, "F_ARR_INT    ");
         sql::assignValue(f_arr_uuid  , r, "F_ARR_UUID   ");
         sql::assignValue(f_arr_float , r, "F_ARR_FLOAT  ");
         sql::assignValue(f_arr_double, r, "F_ARR_DOUBLE ");
 
-        log_debug << "ID           " << id        ;
-        log_debug << "F_BOOL       " << f_bool    ;
-        log_debug << "F_INT        " << f_int     ;
-        log_debug << "F_INT64      " << f_int64   ;
-        log_debug << "F_ENUM       " << f_enum    ;
-        log_debug << "F_FLOAT      " << f_float   ;
-        log_debug << "F_DATE       " << f_date    ;
-        log_debug << "F_TIME       " << f_time    ;
-        log_debug << "F_DATETIME   " << f_datetime;
-        log_debug << "F_STRING     " << f_string  ;
-        log_debug << "F_ARR_INT    " << QVariant::fromValue(f_arr_int);
-        log_debug << "F_ARR_UUID   " << QVariant::fromValue(f_arr_uuid);
-        log_debug << "F_ARR_FLOAT  " << QVariant::fromValue(f_arr_float);
-        log_debug << "F_ARR_DOUBLE " << QVariant::fromValue(f_arr_double);
+        log_debug << "ID                   " << id        ;
+        log_debug << "F_BOOL               " << f_bool    ;
+        log_debug << "F_INT                " << f_int     ;
+        log_debug << "F_INT64              " << f_int64   ;
+        log_debug << "F_ENUM               " << f_enum    ;
+        log_debug << "F_FLOAT              " << f_float   ;
+        log_debug << "F_DATE               " << f_date    ;
+        log_debug << "F_TIME               " << f_time    ;
+        log_debug << "F_DATETIME           " << f_datetime;
+        log_debug << "F_DATETIMETZ (UTC)   " << f_datetimetz;
+        log_debug << "F_DATETIMETZ (Local) " << f_datetimetz.toLocalTime();
+        log_debug << "F_STRING             " << f_string  ;
+        log_debug << "F_ARR_INT            " << QVariant::fromValue(f_arr_int);
+        log_debug << "F_ARR_UUID           " << QVariant::fromValue(f_arr_uuid);
+        log_debug << "F_ARR_FLOAT          " << QVariant::fromValue(f_arr_float);
+        log_debug << "F_ARR_DOUBLE         " << QVariant::fromValue(f_arr_double);
         log_debug << "-----------";
     }
 }
@@ -281,15 +287,16 @@ void MainWindow::on_btnInsAndSelect4_clicked(bool)
     QSqlQuery q {dbcon->createResult()};
 
     QString fields =
-        " ID          "
-        ",F_BOOL      "
-        ",F_INT       "
-        ",F_INT64     "
-        ",F_ENUM      "
-        ",F_FLOAT     "
-        ",F_DATE      "
-        ",F_TIME      "
-        ",F_DATETIME  ";
+        " ID           "
+        ",F_BOOL       "
+        ",F_INT        "
+        ",F_INT64      "
+        ",F_ENUM       "
+        ",F_FLOAT      "
+        ",F_DATE       "
+        ",F_TIME       "
+        ",F_DATETIME   "
+        ",F_DATETIMETZ ";
 
     QString sql = sql::INSERT_OR_UPDATE_PG("TABLE1", fields, "ID");
 
@@ -298,15 +305,16 @@ void MainWindow::on_btnInsAndSelect4_clicked(bool)
 
     QDateTime dtime = QDateTime::currentDateTime();
 
-    sql::bindValue(q, ":ID          " , id                 );
-    sql::bindValue(q, ":F_BOOL      " , true               );
-    sql::bindValue(q, ":F_INT       " , 789                );
-    sql::bindValue(q, ":F_INT64     " , -5064              );
-    sql::bindValue(q, ":F_ENUM      " , InsertMode::Single );
-    sql::bindValue(q, ":F_FLOAT     " , 0.56               );
-    sql::bindValue(q, ":F_DATE      " , dtime              );
-    sql::bindValue(q, ":F_TIME      " , dtime              );
-    sql::bindValue(q, ":F_DATETIME  " , dtime              );
+    sql::bindValue(q, ":ID           " , id                 );
+    sql::bindValue(q, ":F_BOOL       " , true               );
+    sql::bindValue(q, ":F_INT        " , 789                );
+    sql::bindValue(q, ":F_INT64      " , -5064              );
+    sql::bindValue(q, ":F_ENUM       " , InsertMode::Single );
+    sql::bindValue(q, ":F_FLOAT      " , 0.56               );
+    sql::bindValue(q, ":F_DATE       " , dtime              );
+    sql::bindValue(q, ":F_TIME       " , dtime              );
+    sql::bindValue(q, ":F_DATETIME   " , dtime              );
+    sql::bindValue(q, ":F_DATETIMETZ " , dtime              );
 
     if (!q.exec())
         return;
@@ -350,22 +358,23 @@ void MainWindow::on_btnUpdate2_clicked(bool)
     QSqlQuery q {dbcon->createResult()};
 
     QString fields =
-        " ID          "
-        ",F_BOOL      "
-        ",F_INT       "
-        ",F_INT64     "
-        ",F_UINT64    "
-        ",F_ENUM      "
-        ",F_FLOAT     "
-        ",F_DOUBLE    "
-        ",F_DATE      "
-        ",F_TIME      "
-        ",F_DATETIME  "
-        ",F_BYTEARRAY "
-        ",F_STRING    "
-        ",F_UUID      "
-        ",F_ARR_INT   "
-        ",F_ARR_UUID  ";
+        " ID           "
+        ",F_BOOL       "
+        ",F_INT        "
+        ",F_INT64      "
+        ",F_UINT64     "
+        ",F_ENUM       "
+        ",F_FLOAT      "
+        ",F_DOUBLE     "
+        ",F_DATE       "
+        ",F_TIME       "
+        ",F_DATETIME   "
+        ",F_DATETIMETZ "
+        ",F_BYTEARRAY  "
+        ",F_STRING     "
+        ",F_UUID       "
+        ",F_ARR_INT    "
+        ",F_ARR_UUID   ";
 
     QString sql = sql::INSERT_OR_UPDATE_PG("TABLE1", fields, "ID");
 
@@ -375,16 +384,17 @@ void MainWindow::on_btnUpdate2_clicked(bool)
     QUuidEx id {"e7da463a-e96d-43e0-baeb-99278a1845ee"};
     QDateTime dtime = QDateTime::currentDateTime();
 
-    sql::bindValue(q, ":ID          " , id                  );
-    sql::bindValue(q, ":F_BOOL      " , false               );
-    sql::bindValue(q, ":F_INT       " , 0                   );
-    sql::bindValue(q, ":F_INT64     " , 0                   );
-    sql::bindValue(q, ":F_UINT64    " , 0                   );
-    sql::bindValue(q, ":F_ENUM      " , InsertMode::Unknown );
-    sql::bindValue(q, ":F_FLOAT     " , -1                  );
-    sql::bindValue(q, ":F_DATE      " , dtime               );
-    sql::bindValue(q, ":F_TIME      " , dtime               );
-    sql::bindValue(q, ":F_DATETIME  " , dtime               );
+    sql::bindValue(q, ":ID           " , id                  );
+    sql::bindValue(q, ":F_BOOL       " , false               );
+    sql::bindValue(q, ":F_INT        " , 0                   );
+    sql::bindValue(q, ":F_INT64      " , 0                   );
+    sql::bindValue(q, ":F_UINT64     " , 0                   );
+    sql::bindValue(q, ":F_ENUM       " , InsertMode::Unknown );
+    sql::bindValue(q, ":F_FLOAT      " , -1                  );
+    sql::bindValue(q, ":F_DATE       " , dtime               );
+    sql::bindValue(q, ":F_TIME       " , dtime               );
+    sql::bindValue(q, ":F_DATETIME   " , dtime               );
+    sql::bindValue(q, ":F_DATETIMETZ " , dtime               );
 
     if (q.exec())
     {
@@ -412,6 +422,7 @@ void MainWindow::on_btnInsert1_clicked(bool)
         "  ,F_DATE                                  "
         "  ,F_TIME                                  "
         "  ,F_DATETIME                              "
+        "  ,F_DATETIMETZ                            "
         "  ,F_BYTEARRAY                             "
         "  ,F_STRING                                "
         "  ,F_UUID                                  "
@@ -430,6 +441,7 @@ void MainWindow::on_btnInsert1_clicked(bool)
         "  ,0.25635                                 "
         "  ,'1975-10-10'                            "
         "  ,'01:30:00'                              "
+        "  ,'1975-10-10 01:30:00'                   "
         "  ,'1975-10-10 01:30:00'                   "
         "  ,:F_BYTEARRAY                            "
         "  ,'STRING TEXT'                           "
@@ -491,22 +503,23 @@ void MainWindow::on_btnInsert2_clicked(bool)
         return;
 
     QString fields =
-        " ID          "
-        ",F_BOOL      "
-        ",F_INT       "
-        ",F_INT64     "
-        ",F_UINT64    "
-        ",F_ENUM      "
-        ",F_FLOAT     "
-        ",F_DOUBLE    "
-        ",F_DATE      "
-        ",F_TIME      "
-        ",F_DATETIME  "
-        ",F_BYTEARRAY "
-        ",F_STRING    "
-        ",F_UUID      "
-        ",F_ARR_INT   "
-        ",F_ARR_UUID  ";
+        " ID           "
+        ",F_BOOL       "
+        ",F_INT        "
+        ",F_INT64      "
+        ",F_UINT64     "
+        ",F_ENUM       "
+        ",F_FLOAT      "
+        ",F_DOUBLE     "
+        ",F_DATE       "
+        ",F_TIME       "
+        ",F_DATETIME   "
+        ",F_DATETIMETZ "
+        ",F_BYTEARRAY  "
+        ",F_STRING     "
+        ",F_UUID       "
+        ",F_ARR_INT    "
+        ",F_ARR_UUID   ";
 
     QString sql = sql::INSERT_OR_UPDATE_PG("TABLE1", fields, "ID");
 
@@ -523,44 +536,46 @@ void MainWindow::on_btnInsert2_clicked(bool)
     f_arr_uuid.append(QUuidEx::createUuid());
     f_arr_uuid.append(QUuidEx::createUuid());
 
-    sql::bindValue(q, ":ID          " , QUuidEx::createUuid() );
-    sql::bindValue(q, ":F_BOOL      " , true                  );
-    sql::bindValue(q, ":F_INT       " , 1234                  );
-    sql::bindValue(q, ":F_INT64     " , 123456                );
-    sql::bindValue(q, ":F_UINT64    " , quint64(123456)       );
-    sql::bindValue(q, ":F_ENUM      " , InsertMode::Multi     );
-    sql::bindValue(q, ":F_FLOAT     " , 0.35                  );
-    sql::bindValue(q, ":F_DOUBLE    " , 1.35750               );
-    sql::bindValue(q, ":F_DATE      " , dtime                 );
-    sql::bindValue(q, ":F_TIME      " , dtime                 );
-    sql::bindValue(q, ":F_DATETIME  " , dtime                 );
-    sql::bindValue(q, ":F_BYTEARRAY " , f_bytearray           );
-    sql::bindValue(q, ":F_STRING    " , QString("TEXT 2")     );
-    sql::bindValue(q, ":F_UUID      " , f_uuid                );
-    sql::bindValue(q, ":F_ARR_INT   " , f_arr_int             );
-    sql::bindValue(q, ":F_ARR_UUID  " , f_arr_uuid            );
+    sql::bindValue(q, ":ID           " , QUuidEx::createUuid() );
+    sql::bindValue(q, ":F_BOOL       " , true                  );
+    sql::bindValue(q, ":F_INT        " , 1234                  );
+    sql::bindValue(q, ":F_INT64      " , 123456                );
+    sql::bindValue(q, ":F_UINT64     " , quint64(123456)       );
+    sql::bindValue(q, ":F_ENUM       " , InsertMode::Multi     );
+    sql::bindValue(q, ":F_FLOAT      " , 0.35                  );
+    sql::bindValue(q, ":F_DOUBLE     " , 1.35750               );
+    sql::bindValue(q, ":F_DATE       " , dtime                 );
+    sql::bindValue(q, ":F_TIME       " , dtime                 );
+    sql::bindValue(q, ":F_DATETIME   " , dtime                 );
+    sql::bindValue(q, ":F_DATETIMETZ " , dtime                 );
+    sql::bindValue(q, ":F_BYTEARRAY  " , f_bytearray           );
+    sql::bindValue(q, ":F_STRING     " , QString("TEXT 2")     );
+    sql::bindValue(q, ":F_UUID       " , f_uuid                );
+    sql::bindValue(q, ":F_ARR_INT    " , f_arr_int             );
+    sql::bindValue(q, ":F_ARR_UUID   " , f_arr_uuid            );
 
     if (!q.exec())
         return;
 
     QVector<qint32> f_arr_int2 {5, 6, 7, 8};
 
-    sql::bindValue(q, ":ID          " , QUuidEx::createUuid() );
-    sql::bindValue(q, ":F_BOOL      " , false                 );
-    sql::bindValue(q, ":F_INT       " , -5678                 );
-    sql::bindValue(q, ":F_INT64     " , -56789                );
-    sql::bindValue(q, ":F_UINT64    " , quint64(-56789)       );
-    sql::bindValue(q, ":F_ENUM      " , InsertMode::Multi     );
-    sql::bindValue(q, ":F_FLOAT     " , 0.78                  );
-    sql::bindValue(q, ":F_DOUBLE    " , 2.789525              );
-    sql::bindValue(q, ":F_DATE      " , dtime                 );
-    sql::bindValue(q, ":F_TIME      " , dtime                 );
-    sql::bindValue(q, ":F_DATETIME  " , dtime                 );
-    sql::bindValue(q, ":F_BYTEARRAY " , QVariant(QVariant::ByteArray));
-    sql::bindValue(q, ":F_STRING    " , QVariant(QVariant::String));
-    sql::bindValue(q, ":F_UUID      " , f_uuid                );
-    sql::bindValue(q, ":F_ARR_INT   " , f_arr_int2            );
-  //sql::bindValue(q, ":F_ARR_UUID  " , f_arr_uuid            );
+    sql::bindValue(q, ":ID           " , QUuidEx::createUuid() );
+    sql::bindValue(q, ":F_BOOL       " , false                 );
+    sql::bindValue(q, ":F_INT        " , -5678                 );
+    sql::bindValue(q, ":F_INT64      " , -56789                );
+    sql::bindValue(q, ":F_UINT64     " , quint64(-56789)       );
+    sql::bindValue(q, ":F_ENUM       " , InsertMode::Multi     );
+    sql::bindValue(q, ":F_FLOAT      " , 0.78                  );
+    sql::bindValue(q, ":F_DOUBLE     " , 2.789525              );
+    sql::bindValue(q, ":F_DATE       " , dtime                 );
+    sql::bindValue(q, ":F_TIME       " , dtime                 );
+    sql::bindValue(q, ":F_DATETIME   " , dtime                 );
+    sql::bindValue(q, ":F_DATETIMETZ " , dtime                 );
+    sql::bindValue(q, ":F_BYTEARRAY  " , QVariant(QVariant::ByteArray));
+    sql::bindValue(q, ":F_STRING     " , QVariant(QVariant::String));
+    sql::bindValue(q, ":F_UUID       " , f_uuid                );
+    sql::bindValue(q, ":F_ARR_INT    " , f_arr_int2            );
+  //sql::bindValue(q, ":F_ARR_UUID   " , f_arr_uuid            );
 
     if (!q.exec())
         return;
@@ -576,22 +591,23 @@ void insertThread(db::postgres::Transaction::Ptr transact, int index)
     QSqlQuery q {db::postgres::createResult(transact)};
 
     QString fields =
-        " ID          "
-        ",F_BOOL      "
-        ",F_INT       "
-        ",F_INT64     "
-        ",F_UINT64    "
-        ",F_ENUM      "
-        ",F_FLOAT     "
-        ",F_DOUBLE    "
-        ",F_DATE      "
-        ",F_TIME      "
-        ",F_DATETIME  "
-        ",F_BYTEARRAY "
-        ",F_STRING    "
-        ",F_UUID      "
-        ",F_ARR_INT   "
-        ",F_ARR_UUID  ";
+        " ID           "
+        ",F_BOOL       "
+        ",F_INT        "
+        ",F_INT64      "
+        ",F_UINT64     "
+        ",F_ENUM       "
+        ",F_FLOAT      "
+        ",F_DOUBLE     "
+        ",F_DATE       "
+        ",F_TIME       "
+        ",F_DATETIME   "
+        ",F_DATETIMETZ "
+        ",F_BYTEARRAY  "
+        ",F_STRING     "
+        ",F_UUID       "
+        ",F_ARR_INT    "
+        ",F_ARR_UUID   ";
 
     QString sql = sql::INSERT_OR_UPDATE_PG("TABLE1", fields, "ID");
 
@@ -613,22 +629,23 @@ void insertThread(db::postgres::Transaction::Ptr transact, int index)
         f_arr_uuid.append(QUuidEx::createUuid());
         f_arr_uuid.append(QUuidEx::createUuid());
 
-        sql::bindValue(q, ":ID          " , QUuidEx::createUuid() );
-        sql::bindValue(q, ":F_BOOL      " , index                 );
-        sql::bindValue(q, ":F_INT       " , i                     );
-        sql::bindValue(q, ":F_INT64     " , trd::gettid()         );
-        sql::bindValue(q, ":F_UINT64    " , quint64(123456)       );
-        sql::bindValue(q, ":F_ENUM      " , (index == 0) ? InsertMode::Thread1 : InsertMode::Thread2 );
-        sql::bindValue(q, ":F_FLOAT     " , 0.455                 );
-        sql::bindValue(q, ":F_DOUBLE    " , 2.563                 );
-        sql::bindValue(q, ":F_DATE      " , dtime                 );
-        sql::bindValue(q, ":F_TIME      " , dtime                 );
-        sql::bindValue(q, ":F_DATETIME  " , dtime                 );
-        sql::bindValue(q, ":F_BYTEARRAY " , f_bytearray           );
-        sql::bindValue(q, ":F_STRING    " , QString("TEXT 3")     );
-        sql::bindValue(q, ":F_UUID      " , f_uuid                );
-        sql::bindValue(q, ":F_ARR_INT   " , f_arr_int             );
-        sql::bindValue(q, ":F_ARR_UUID  " , f_arr_uuid            );
+        sql::bindValue(q, ":ID           " , QUuidEx::createUuid() );
+        sql::bindValue(q, ":F_BOOL       " , index                 );
+        sql::bindValue(q, ":F_INT        " , i                     );
+        sql::bindValue(q, ":F_INT64      " , trd::gettid()         );
+        sql::bindValue(q, ":F_UINT64     " , quint64(123456)       );
+        sql::bindValue(q, ":F_ENUM       " , (index == 0) ? InsertMode::Thread1 : InsertMode::Thread2 );
+        sql::bindValue(q, ":F_FLOAT      " , 0.455                 );
+        sql::bindValue(q, ":F_DOUBLE     " , 2.563                 );
+        sql::bindValue(q, ":F_DATE       " , dtime                 );
+        sql::bindValue(q, ":F_TIME       " , dtime                 );
+        sql::bindValue(q, ":F_DATETIME   " , dtime                 );
+        sql::bindValue(q, ":F_DATETIMETZ " , dtime                 );
+        sql::bindValue(q, ":F_BYTEARRAY  " , f_bytearray           );
+        sql::bindValue(q, ":F_STRING     " , QString("TEXT 3")     );
+        sql::bindValue(q, ":F_UUID       " , f_uuid                );
+        sql::bindValue(q, ":F_ARR_INT    " , f_arr_int             );
+        sql::bindValue(q, ":F_ARR_UUID   " , f_arr_uuid            );
 
         if (!q.exec())
             return;

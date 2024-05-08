@@ -29,6 +29,7 @@ CREATE TABLE public.table1
     f_date date,
     f_time time without time zone,
     f_datetime timestamp without time zone,
+    f_datetimetz timestamp with time zone,
     f_bytearray bytea,
     f_string text COLLATE pg_catalog."default",
     f_uuid uuid,
